@@ -1,0 +1,11 @@
+# Development and test dependencies.
+#
+# Install alongside the runtime requirements:
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+# pytest was previously undeclared even though the suite has 249 tests and
+# scripts/ci_migration_gate.sh invokes it, so a freshly built environment
+# could run the app but not its tests.
+-r requirements.txt
+
+pytest==9.1.1

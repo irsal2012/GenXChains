@@ -40,8 +40,11 @@ __pycache__/
 *$py.class
 
 # Virtual environments
-.venv/
-venv/
+# The globs match venv/ and .venv/ plus variants such as
+# venv.broken-3.11-dangling/, so a set-aside environment can never be swept
+# into a commit by `git add -A`.
+.venv*/
+venv*/
 ENV/
 env/
 
