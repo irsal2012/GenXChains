@@ -72,7 +72,7 @@ export function KPIPage() {
   const TrendIcon = ({ trend }: { trend?: string }) => {
     if (trend === 'improving') return <TrendingUp className="h-4 w-4 text-emerald-500" />
     if (trend === 'declining') return <TrendingDown className="h-4 w-4 text-red-500" />
-    return <Minus className="h-4 w-4 text-gray-400" />
+    return <Minus className="h-4 w-4 text-gray-400 dark:text-gray-500" />
   }
 
   // Extra guard: if backend returns Decimal fields as strings, avoid crashing
@@ -95,8 +95,8 @@ export function KPIPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">KPI Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{metrics.length} metrics tracked</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">KPI Dashboard</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{metrics.length} metrics tracked</p>
         </div>
         {canManage && (
           <Button icon={<Plus />} onClick={() => setShowCreate(true)}>
@@ -110,7 +110,7 @@ export function KPIPage() {
         <button
           onClick={() => setActiveCategory('')}
           className={`px-3 py-1.5 text-xs rounded-full font-medium transition-colors ${
-            activeCategory === '' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            activeCategory === '' ? 'bg-gray-900 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
         >
           All
@@ -120,7 +120,7 @@ export function KPIPage() {
             key={cat}
             onClick={() => setActiveCategory(cat)}
             className={`px-3 py-1.5 text-xs rounded-full font-medium transition-colors capitalize ${
-              activeCategory === cat ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              activeCategory === cat ? 'bg-gray-900 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
             {cat}
@@ -134,7 +134,7 @@ export function KPIPage() {
         </div>
       ) : metrics.length === 0 ? (
         <Card>
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500">
             <BarChart3 className="h-10 w-10 mx-auto mb-3 opacity-40" />
             <p className="text-sm">No KPI metrics found. Start recording metrics.</p>
           </div>
@@ -146,20 +146,20 @@ export function KPIPage() {
             if (catMetrics.length === 0) return null
             return (
               <div key={cat}>
-                <h2 className="text-sm font-semibold text-gray-700 capitalize mb-3">{cat} KPIs</h2>
+                <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 capitalize mb-3">{cat} KPIs</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {catMetrics.map((metric) => {
                     const valueNum = asNumber(metric.value)
                     const targetNum = metric.target != null ? asNumber(metric.target) : undefined
                     const achievementPct = targetNum ? (valueNum / targetNum) * 100 : null
                     return (
-                      <div key={metric.id} className="bg-white rounded-xl border border-gray-100 p-5">
+                      <div key={metric.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5">
                         <div className="flex items-start justify-between mb-3">
                           <div>
-                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                               {metric.metric_name.replace(/_/g, ' ')}
                             </p>
-                            <p className="text-xs text-gray-400 mt-0.5">{formatPeriod(metric.period)}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{formatPeriod(metric.period)}</p>
                           </div>
                           <span className={`text-xs px-2 py-0.5 rounded-full border font-medium capitalize ${categoryColor[metric.metric_category]}`}>
                             {metric.metric_category}
@@ -168,14 +168,14 @@ export function KPIPage() {
 
                         <div className="flex items-end justify-between mb-3">
                           <div>
-                            <p className="text-2xl font-bold text-gray-900 tabular-nums">
+                            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
                               {metric.unit === '%' ? formatPercent(valueNum) : formatNumber(valueNum)}
                               {metric.unit && metric.unit !== '%' && (
-                                <span className="text-sm font-normal text-gray-500 ml-1">{metric.unit}</span>
+                                <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-1">{metric.unit}</span>
                               )}
                             </p>
                             {targetNum != null && (
-                              <p className="text-xs text-gray-500 mt-0.5">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                 Target: {metric.unit === '%' ? formatPercent(targetNum) : formatNumber(targetNum)}
                               </p>
                             )}
@@ -192,11 +192,11 @@ export function KPIPage() {
 
                         {achievementPct !== null && (
                           <div>
-                            <div className="flex justify-between text-xs text-gray-400 mb-1">
+                            <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mb-1">
                               <span>Achievement</span>
                               <span>{achievementPct.toFixed(0)}%</span>
                             </div>
-                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full ${achievementPct >= 100 ? 'bg-emerald-500' : achievementPct >= 80 ? 'bg-amber-500' : 'bg-red-500'}`}
                                 style={{ width: `${Math.min(100, achievementPct)}%` }}
@@ -224,48 +224,48 @@ export function KPIPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Metric Name *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Metric Name *</label>
             <input value={form.metric_name ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, metric_name: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., forecast_accuracy" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Category</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
               <select value={form.metric_category ?? 'demand'}
                 onChange={(e) => setForm((f) => ({ ...f, metric_category: e.target.value as KPICategory }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Period *</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Period *</label>
               <input type="month" value={form.period?.slice(0, 7) ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, period: e.target.value + '-01' }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Value *</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Value *</label>
               <input type="number" step="0.01" value={form.value ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, value: Number(e.target.value) }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Target</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Target</label>
               <input type="number" step="0.01" value={form.target ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, target: Number(e.target.value) }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Unit</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit</label>
               <input value={form.unit ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="%, units..." />
             </div>
           </div>

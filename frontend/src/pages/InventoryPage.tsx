@@ -42,10 +42,12 @@ import type {
 import { useAuthStore } from '@/store/authStore'
 import { can } from '@/auth/permissions'
 import toast from 'react-hot-toast'
+import { useChartTheme } from '@/utils/chartTheme'
 
 const STATUSES = ['', 'normal', 'low', 'critical', 'excess']
 
 export function InventoryPage() {
+  const chart = useChartTheme()
   const { user } = useAuthStore()
   const canUpdate = can(user?.role, 'inventory.update')
 
@@ -405,8 +407,8 @@ export function InventoryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Inventory Management</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{total} SKUs tracked</p>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Inventory Management</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} SKUs tracked</p>
       </div>
 
       {/* KPI row */}
@@ -440,8 +442,8 @@ export function InventoryPage() {
           </Button>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <div className="border border-gray-100 rounded-lg p-3">
-            <p className="text-sm font-medium text-gray-800 mb-2">Stock Status Distribution</p>
+          <div className="border border-gray-100 dark:border-gray-700 rounded-lg p-3">
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Stock Status Distribution</p>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -464,18 +466,18 @@ export function InventoryPage() {
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => formatNumber(Number(value ?? 0))} />
-                  <Legend />
+                  <Legend wrapperStyle={chart.legend} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="border border-gray-100 rounded-lg p-3">
-            <p className="text-sm font-medium text-gray-800 mb-2">Working Capital Breakdown</p>
+          <div className="border border-gray-100 dark:border-gray-700 rounded-lg p-3">
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Working Capital Breakdown</p>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={workingCapitalChartData} margin={{ top: 8, right: 12, left: 4, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
                   <XAxis dataKey="metric" tick={{ fontSize: 11 }} />
                   <YAxis tickFormatter={(v) => `$${Math.round(Number(v) / 1000)}k`} width={56} />
                   <Tooltip formatter={(value) => formatCurrency(Number(value ?? 0))} />
@@ -485,14 +487,14 @@ export function InventoryPage() {
             </div>
           </div>
 
-          <div className="border border-gray-100 rounded-lg p-3">
-            <p className="text-sm font-medium text-gray-800 mb-2">Data Quality Distribution</p>
+          <div className="border border-gray-100 dark:border-gray-700 rounded-lg p-3">
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Data Quality Distribution</p>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={qualityTierData} margin={{ top: 8, right: 12, left: 4, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="tier" />
-                  <YAxis allowDecimals={false} width={40} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                  <XAxis dataKey="tier" tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
+                  <YAxis allowDecimals={false} width={40} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
                   <Tooltip formatter={(value) => formatNumber(Number(value ?? 0))} />
                   <Bar
                     dataKey="count"
@@ -516,14 +518,14 @@ export function InventoryPage() {
             </div>
           </div>
 
-          <div className="border border-gray-100 rounded-lg p-3">
-            <p className="text-sm font-medium text-gray-800 mb-2">Recommendation Funnel</p>
+          <div className="border border-gray-100 dark:border-gray-700 rounded-lg p-3">
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Recommendation Funnel</p>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={recommendationFunnelData} margin={{ top: 8, right: 12, left: 4, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="stage" />
-                  <YAxis allowDecimals={false} width={40} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                  <XAxis dataKey="stage" tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
+                  <YAxis allowDecimals={false} width={40} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
                   <Tooltip formatter={(value) => formatNumber(Number(value ?? 0))} />
                   <Bar
                     dataKey="value"
@@ -551,7 +553,7 @@ export function InventoryPage() {
       >
         <div className="flex flex-wrap items-end gap-2 mb-3">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">SKU / Location</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">SKU / Location</label>
             <select
               value={String(selectedServiceLevelInventoryId ?? '')}
               onChange={(e) => {
@@ -560,7 +562,7 @@ export function InventoryPage() {
                 setSelectedServiceLevelInventoryId(nextId)
                 void loadServiceLevelAnalytics(nextId)
               }}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-2 min-w-[260px]"
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 min-w-[260px]"
               disabled={items.length === 0}
             >
               {items.length === 0 ? (
@@ -575,7 +577,7 @@ export function InventoryPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Method</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Method</label>
             <select
               value={serviceLevelMethod}
               onChange={(e) => {
@@ -586,14 +588,14 @@ export function InventoryPage() {
                 if (!id) return
                 void loadServiceLevelAnalytics(id, { method: nextMethod })
               }}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-2"
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2"
             >
               <option value="analytical">Analytical</option>
               <option value="monte_carlo">Monte Carlo</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Target Service Level</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Target Service Level</label>
             <select
               value={String(targetServiceLevel)}
               onChange={(e) => {
@@ -604,7 +606,7 @@ export function InventoryPage() {
                 if (!id) return
                 void loadServiceLevelAnalytics(id, { target_service_level: nextTarget })
               }}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-2"
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2"
             >
               <option value="0.9">90%</option>
               <option value="0.95">95%</option>
@@ -626,7 +628,7 @@ export function InventoryPage() {
         </div>
 
         {!serviceLevelAnalytics ? (
-          <div className="text-sm text-gray-500">No inventory scope available for uncertainty analytics.</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">No inventory scope available for uncertainty analytics.</div>
         ) : (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
@@ -636,7 +638,7 @@ export function InventoryPage() {
               <KPICard title="Recommended SS" value={formatNumber(serviceLevelAnalytics.recommended_safety_stock)} icon={<Bot className="h-4 w-4" />} color="purple" />
             </div>
 
-            <div className="flex items-center justify-end gap-3 text-xs text-gray-500 mb-1.5">
+            <div className="flex items-center justify-end gap-3 text-xs text-gray-500 dark:text-gray-400 mb-1.5">
               <div className="flex items-center gap-2">
                 <span
                   className="inline-block w-5 h-2 rounded-sm"
@@ -653,7 +655,7 @@ export function InventoryPage() {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={serviceLevelDistributionData} margin={{ top: 8, right: 12, left: 4, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
                   <XAxis dataKey="bucket" tick={{ fontSize: 10 }} interval={2} />
                   <YAxis tickFormatter={(v) => `${v}%`} width={44} />
                   <Tooltip formatter={(value) => `${Number(value).toFixed(2)}%`} />
@@ -698,13 +700,13 @@ export function InventoryPage() {
 
       <Card title="Data Quality Gate" subtitle="Phase 6 data quality scoring for recommendation readiness">
         {filteredDataQuality.length === 0 ? (
-          <div className="text-sm text-gray-500">No data-quality records available.</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">No data-quality records available.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {filteredDataQuality.slice(0, 6).map((dq) => (
-              <div key={dq.inventory_id} className="border border-gray-100 rounded-lg p-3">
-                <p className="text-xs text-gray-500">Inventory #{dq.inventory_id} · Product #{dq.product_id}</p>
-                <p className="text-sm font-semibold text-gray-900 mt-1">{dq.location}</p>
+              <div key={dq.inventory_id} className="border border-gray-100 dark:border-gray-700 rounded-lg p-3">
+                <p className="text-xs text-gray-500 dark:text-gray-400">Inventory #{dq.inventory_id} · Product #{dq.product_id}</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mt-1">{dq.location}</p>
                 <p className={`text-xs mt-1 ${dq.quality_tier === 'high' ? 'text-emerald-600' : dq.quality_tier === 'medium' ? 'text-amber-600' : 'text-red-600'}`}>
                   Tier: {dq.quality_tier.toUpperCase()} · Overall: {(dq.overall_score * 100).toFixed(0)}%
                 </p>
@@ -725,27 +727,27 @@ export function InventoryPage() {
 
       <Card title="Control Tower Escalations" subtitle="Phase 7 SLA and severity-based exception escalation feed">
         {escalations.length === 0 ? (
-          <div className="text-sm text-gray-500">No active escalations.</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">No active escalations.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Level', 'Exception', 'Product', 'Location', 'Status', 'Due Date', 'Reason'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {escalations.map((e) => (
-                  <tr key={e.exception_id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={e.exception_id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-4 py-3"><StatusBadge status={e.escalation_level === 'L2' ? 'critical' : 'warning'} size="sm" /></td>
-                    <td className="px-4 py-3 text-gray-700">#{e.exception_id}</td>
-                    <td className="px-4 py-3 text-gray-700">#{e.product_id}</td>
-                    <td className="px-4 py-3 text-gray-700">{e.location}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">#{e.exception_id}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">#{e.product_id}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{e.location}</td>
                     <td className="px-4 py-3"><StatusBadge status={e.status} size="sm" /></td>
-                    <td className="px-4 py-3 text-gray-700">{e.due_date ?? '—'}</td>
-                    <td className="px-4 py-3 text-gray-700">{e.escalation_reason}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{e.due_date ?? '—'}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{e.escalation_reason}</td>
                   </tr>
                 ))}
               </tbody>
@@ -757,23 +759,23 @@ export function InventoryPage() {
       {assessment && (
         <Card title="Optimization Assessment Scorecard" subtitle="Phase 8 executive maturity scorecard">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm text-gray-700">{assessment.maturity_level}</p>
-            <p className="text-xs text-gray-500">Checks: {assessment.total_yes}/{assessment.total_checks}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300">{assessment.maturity_level}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Checks: {assessment.total_yes}/{assessment.total_checks}</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Area', 'Score', 'RAG'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {assessment.areas.map((a) => (
-                  <tr key={a.area} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-700">{a.area}</td>
-                    <td className="px-4 py-3 text-gray-700">{a.yes_count}/{a.total_count}</td>
+                  <tr key={a.area} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{a.area}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{a.yes_count}/{a.total_count}</td>
                     <td className="px-4 py-3">
                       <StatusBadge status={a.rag === 'green' ? 'normal' : a.rag === 'amber' ? 'warning' : 'critical'} size="sm" />
                     </td>
@@ -788,10 +790,10 @@ export function InventoryPage() {
       <Card padding={false}>
         <div className="flex items-center gap-3 p-4">
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <input
               placeholder="Search inventory..."
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -825,11 +827,11 @@ export function InventoryPage() {
                 </Button>
               </>
             )}
-            <Filter className="h-4 w-4 text-gray-400" />
+            <Filter className="h-4 w-4 text-gray-400 dark:text-gray-500" />
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {STATUSES.map((s) => (
                 <option key={s} value={s}>{s ? s.charAt(0).toUpperCase() + s.slice(1) : 'All Statuses'}</option>
@@ -841,7 +843,7 @@ export function InventoryPage() {
         {loading ? (
           <div className="p-4"><SkeletonTable rows={8} cols={8} /></div>
         ) : items.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500">
             <Package className="h-10 w-10 mx-auto mb-3 opacity-40" />
             <p className="text-sm">No inventory records found</p>
           </div>
@@ -849,27 +851,27 @@ export function InventoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Product', 'Location', 'On Hand', 'Allocated', 'In Transit', 'Safety Stock', 'ROP', 'Days of Supply', 'Status', 'Actions'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {items.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                  <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
                       {item.product?.name ?? `Product #${item.product_id}`}
                       {item.product?.sku && (
-                        <span className="block text-xs text-gray-400">{item.product.sku}</span>
+                        <span className="block text-xs text-gray-400 dark:text-gray-500">{item.product.sku}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{item.location}</td>
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{item.location}</td>
                     <td className="px-4 py-3 tabular-nums font-medium">{formatNumber(item.on_hand_qty)}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-600">{formatNumber(item.allocated_qty)}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-600">{formatNumber(item.in_transit_qty)}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-600">{formatNumber(item.safety_stock)}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-600">{formatNumber(item.reorder_point)}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-600 dark:text-gray-400">{formatNumber(item.allocated_qty)}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-600 dark:text-gray-400">{formatNumber(item.in_transit_qty)}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-600 dark:text-gray-400">{formatNumber(item.safety_stock)}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-600 dark:text-gray-400">{formatNumber(item.reorder_point)}</td>
                     <td className="px-4 py-3 tabular-nums">
                       {(() => {
                         // Defensive: backend decimals may arrive as strings; avoid crashing the page.
@@ -879,7 +881,7 @@ export function InventoryPage() {
                         if (n === undefined || Number.isNaN(n)) return '—'
 
                         return (
-                          <span className={n < 7 ? 'text-red-600 font-medium' : n < 14 ? 'text-amber-600' : 'text-gray-900'}>
+                          <span className={n < 7 ? 'text-red-600 font-medium' : n < 14 ? 'text-amber-600' : 'text-gray-900 dark:text-gray-100'}>
                             {n.toFixed(0)}d
                           </span>
                         )
@@ -892,7 +894,7 @@ export function InventoryPage() {
                           Override
                         </Button>
                       ) : (
-                        <span className="text-xs text-gray-400">—</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
                       )}
                     </td>
                   </tr>
@@ -903,22 +905,22 @@ export function InventoryPage() {
         )}
 
         {total > pageSize && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} of {total}
             </p>
             <div className="flex gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50"
+                className="px-3 py-1.5 text-xs border border-gray-200 dark:border-gray-700 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Previous
               </button>
               <button
                 disabled={page * pageSize >= total}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50"
+                className="px-3 py-1.5 text-xs border border-gray-200 dark:border-gray-700 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 Next
               </button>
@@ -929,24 +931,24 @@ export function InventoryPage() {
 
       <Card title="Network Rebalance Recommendations" subtitle="Phase 4 multi-location transfer suggestions">
         {rebalance.length === 0 ? (
-          <div className="text-sm text-gray-500">No rebalance opportunities detected.</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">No rebalance opportunities detected.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Product', 'From', 'To', 'Transfer Qty', 'Estimated Service Uplift'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {rebalance.map((r, idx) => (
-                  <tr key={`${r.product_id}-${r.from_inventory_id}-${r.to_inventory_id}-${idx}`} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-700">{r.product_name ?? `#${r.product_id}`}</td>
-                    <td className="px-4 py-3 text-gray-700">{r.from_location}</td>
-                    <td className="px-4 py-3 text-gray-700">{r.to_location}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-700">{formatNumber(r.transfer_qty)}</td>
+                  <tr key={`${r.product_id}-${r.from_inventory_id}-${r.to_inventory_id}-${idx}`} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{r.product_name ?? `#${r.product_id}`}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{r.from_location}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{r.to_location}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-700 dark:text-gray-300">{formatNumber(r.transfer_qty)}</td>
                     <td className="px-4 py-3 text-emerald-700 font-medium">+{r.estimated_service_uplift_pct.toFixed(1)}%</td>
                   </tr>
                 ))}
@@ -958,20 +960,20 @@ export function InventoryPage() {
 
       <Card title="Inventory Policy Exceptions" subtitle="System-generated stockout/excess risk alerts">
         {exceptions.length === 0 ? (
-          <div className="text-sm text-gray-500">No open policy exceptions.</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">No open policy exceptions.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Type', 'Severity', 'Product', 'Location', 'Status', 'Owner', 'Due Date', 'Recommended Action', 'Action'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {exceptions.map((ex, idx) => (
-                  <tr key={`${ex.inventory_id}-${idx}`} className="hover:bg-gray-50 transition-colors">
+                  <tr key={`${ex.inventory_id}-${idx}`} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center gap-1">
                         <ShieldAlert className="h-3.5 w-3.5 text-amber-500" />
@@ -979,12 +981,12 @@ export function InventoryPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={ex.severity} size="sm" /></td>
-                    <td className="px-4 py-3 text-gray-700">#{ex.product_id}</td>
-                    <td className="px-4 py-3 text-gray-700">{ex.location}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">#{ex.product_id}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{ex.location}</td>
                     <td className="px-4 py-3"><StatusBadge status={ex.status} size="sm" /></td>
-                    <td className="px-4 py-3 text-gray-700">{ex.owner_user_id ? `#${ex.owner_user_id}` : '—'}</td>
-                    <td className="px-4 py-3 text-gray-700">{ex.due_date ?? '—'}</td>
-                    <td className="px-4 py-3 text-gray-700">{ex.recommended_action}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{ex.owner_user_id ? `#${ex.owner_user_id}` : '—'}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{ex.due_date ?? '—'}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{ex.recommended_action}</td>
                     <td className="px-4 py-3">
                       {canUpdate && ex.id ? (
                         <div className="flex gap-1">
@@ -1000,7 +1002,7 @@ export function InventoryPage() {
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-gray-400">—</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
                       )}
                     </td>
                   </tr>
@@ -1013,28 +1015,28 @@ export function InventoryPage() {
 
       <Card title="AI Policy Recommendations" subtitle="Phase 3/6 queue with maker-checker approval support">
         {recommendations.length === 0 ? (
-          <div className="text-sm text-gray-500">No pending recommendations. Generate recommendations to start review.</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">No pending recommendations. Generate recommendations to start review.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Confidence', 'Product', 'Location', 'Safety Stock', 'ROP', 'Max Stock', 'Status', 'Rationale', 'Action'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {recommendations.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">{Math.round((rec.confidence_score || 0) * 100)}%</td>
-                    <td className="px-4 py-3 text-gray-700">#{rec.product_id}</td>
-                    <td className="px-4 py-3 text-gray-700">{rec.location}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-700">{formatNumber(rec.recommended_safety_stock)}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-700">{formatNumber(rec.recommended_reorder_point)}</td>
-                    <td className="px-4 py-3 tabular-nums text-gray-700">{rec.recommended_max_stock != null ? formatNumber(rec.recommended_max_stock) : '—'}</td>
+                  <tr key={rec.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{Math.round((rec.confidence_score || 0) * 100)}%</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">#{rec.product_id}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{rec.location}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-700 dark:text-gray-300">{formatNumber(rec.recommended_safety_stock)}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-700 dark:text-gray-300">{formatNumber(rec.recommended_reorder_point)}</td>
+                    <td className="px-4 py-3 tabular-nums text-gray-700 dark:text-gray-300">{rec.recommended_max_stock != null ? formatNumber(rec.recommended_max_stock) : '—'}</td>
                     <td className="px-4 py-3"><StatusBadge status={rec.status} size="sm" /></td>
-                    <td className="px-4 py-3 text-gray-700 max-w-sm">{rec.rationale}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300 max-w-sm">{rec.rationale}</td>
                     <td className="px-4 py-3">
                       {canUpdate ? (
                         <div className="flex gap-1">
@@ -1055,7 +1057,7 @@ export function InventoryPage() {
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-gray-400">—</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
                       )}
                     </td>
                   </tr>
@@ -1080,40 +1082,40 @@ export function InventoryPage() {
         <div className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Safety Stock</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Safety Stock</label>
               <input
                 type="number"
                 value={overrideForm.safety_stock}
                 onChange={(e) => setOverrideForm((f) => ({ ...f, safety_stock: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Reorder Point</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Reorder Point</label>
               <input
                 type="number"
                 value={overrideForm.reorder_point}
                 onChange={(e) => setOverrideForm((f) => ({ ...f, reorder_point: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Max Stock</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Max Stock</label>
               <input
                 type="number"
                 value={overrideForm.max_stock}
                 onChange={(e) => setOverrideForm((f) => ({ ...f, max_stock: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Reason *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Reason *</label>
             <textarea
               rows={3}
               value={overrideForm.reason}
               onChange={(e) => setOverrideForm((f) => ({ ...f, reason: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Document business reason for policy override"
             />
           </div>

@@ -115,13 +115,13 @@ export function getTrendIcon(trend?: string): string {
 export function getTrendColor(trend?: string): string {
   if (trend === 'improving') return 'text-emerald-600'
   if (trend === 'declining') return 'text-red-500'
-  return 'text-gray-500'
+  return 'text-gray-500 dark:text-gray-400'
 }
 
 export function getChangeColor(change: number): string {
   if (change > 0) return 'text-emerald-600'
   if (change < 0) return 'text-red-500'
-  return 'text-gray-500'
+  return 'text-gray-500 dark:text-gray-400'
 }
 
 // ── Role helpers ──────────────────────────────────────────────────────────────

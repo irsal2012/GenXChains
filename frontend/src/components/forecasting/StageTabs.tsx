@@ -15,7 +15,7 @@ type StageTabsProps<K extends string = string> = {
 
 export function StageTabs<K extends string>({ stages, activeStage, stageEnabled, getStatus, onSelect }: StageTabsProps<K>) {
   return (
-    <div className="border-b border-gray-200">
+    <div className="border-b border-gray-200 dark:border-gray-700">
       <nav className="-mb-px flex flex-wrap gap-2">
         {stages.map((stage) => {
           const status = getStatus(stage.key)
@@ -31,7 +31,7 @@ export function StageTabs<K extends string>({ stages, activeStage, stageEnabled,
                   ? 'border-blue-600 text-blue-700 bg-blue-50'
                   : disabled
                     ? 'border-transparent text-gray-300 cursor-not-allowed'
-                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-300'
               }`}
             >
               <span>{stage.label}</span>
@@ -41,7 +41,7 @@ export function StageTabs<K extends string>({ stages, activeStage, stageEnabled,
                   : status === 'active'
                     ? 'bg-blue-100 text-blue-700'
                     : status === 'locked'
-                      ? 'bg-gray-100 text-gray-400'
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
                       : 'bg-amber-100 text-amber-700'
               }`}>
                 {status}

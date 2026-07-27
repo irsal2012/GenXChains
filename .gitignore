@@ -72,6 +72,12 @@ coverage.xml
 *.sqlite3
 *.db
 backend/genxchains.db
+# Database files and their backups must never be committed: they hold user
+# records and password hashes, and this repository is public.
+*.db
+*.db.bak*
+*.sqlite
+*.sqlite3
 
 # Alembic
 backend/alembic/versions/*.pyc

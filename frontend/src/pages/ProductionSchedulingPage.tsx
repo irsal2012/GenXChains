@@ -397,18 +397,18 @@ export function ProductionSchedulingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Production Scheduling</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Line / shift / workcenter sequencing for supply plan execution</p>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Production Scheduling</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Line / shift / workcenter sequencing for supply plan execution</p>
       </div>
 
       <Card title="Generate Schedule" subtitle="Create finite slots from selected supply plan">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Supply Plan</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Supply Plan</label>
             <select
               value={selectedSupplyPlanId ?? ''}
               onChange={(e) => setSelectedSupplyPlanId(e.target.value ? Number(e.target.value) : undefined)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             >
               {supplyPlans.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -417,47 +417,47 @@ export function ProductionSchedulingPage() {
               ))}
             </select>
             {selectedPlan && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Selected: {formatPeriod(selectedPlan.period)} • Planned Qty {formatNumber(selectedPlan.planned_prod_qty ?? 0)}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Workcenters (comma-separated)</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Workcenters (comma-separated)</label>
             <input
               value={workcenters}
               onChange={(e) => setWorkcenters(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
               placeholder="WC-1, WC-2"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Lines (comma-separated)</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Lines (comma-separated)</label>
             <input
               value={lines}
               onChange={(e) => setLines(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
               placeholder="Line-1, Line-2"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Duration Hours per Slot</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Duration Hours per Slot</label>
             <input
               type="number"
               min={1}
               max={24}
               value={durationHours}
               onChange={(e) => setDurationHours(Number(e.target.value))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
         </div>
 
         <div className="mt-4">
-          <label className="block text-xs font-medium text-gray-700 mb-1.5">Shifts</label>
+          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Shifts</label>
           <div className="flex flex-wrap gap-2">
             {SHIFT_OPTIONS.map((s) => (
               <button
@@ -465,7 +465,7 @@ export function ProductionSchedulingPage() {
                 onClick={() => toggleShift(s)}
                 className={`px-3 py-1.5 rounded-full text-xs border ${selectedShifts.includes(s)
                   ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-700 border-gray-300'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'
                 }`}
               >
                 {s}
@@ -483,31 +483,31 @@ export function ProductionSchedulingPage() {
       <Card title="Event-Driven Recommendation Review" subtitle="Trigger, evaluate, and decide agentic recommendations">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Event Type</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Event Type</label>
             <select
               value={eventType}
               onChange={(e) => setEventType(e.target.value as AgenticEventType)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             >
               {EVENT_TYPES.map((e) => <option key={e} value={e}>{e}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Severity</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Severity</label>
             <select
               value={eventSeverity}
               onChange={(e) => setEventSeverity(e.target.value as AgenticSeverity)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             >
               {SEVERITY_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Note</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Note</label>
             <input
               value={eventNote}
               onChange={(e) => setEventNote(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
               placeholder="Optional context"
             />
           </div>
@@ -530,28 +530,28 @@ export function ProductionSchedulingPage() {
           </div>
         )}
 
-        <div className="mt-4 overflow-x-auto border border-gray-100 rounded-lg">
+        <div className="mt-4 overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
+              <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 {['Created', 'Event', 'Severity', 'Status', 'Impacted Rows', 'Summary', 'Decision'].map((h) => (
-                  <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                  <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {recommendations.length === 0 ? (
                 <tr>
-                  <td className="px-4 py-3 text-sm text-gray-500" colSpan={7}>No recommendations yet.</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400" colSpan={7}>No recommendations yet.</td>
                 </tr>
               ) : recommendations.map((r) => (
                 <tr key={r.recommendation_id}>
-                  <td className="px-4 py-2.5 text-gray-700">{new Date(r.created_at).toLocaleString()}</td>
+                  <td className="px-4 py-2.5 text-gray-700 dark:text-gray-300">{new Date(r.created_at).toLocaleString()}</td>
                   <td className="px-4 py-2.5">{r.event_type}</td>
                   <td className="px-4 py-2.5">{r.severity}</td>
                   <td className="px-4 py-2.5"><StatusBadge status={r.status as ProductionScheduleStatus} size="sm" /></td>
                   <td className="px-4 py-2.5 tabular-nums">{r.impacted_rows}</td>
-                  <td className="px-4 py-2.5 text-gray-700 max-w-[420px] truncate" title={r.recommendation_summary}>
+                  <td className="px-4 py-2.5 text-gray-700 dark:text-gray-300 max-w-[420px] truncate" title={r.recommendation_summary}>
                     {r.recommendation_summary}
                   </td>
                   <td className="px-4 py-2.5">
@@ -592,7 +592,7 @@ export function ProductionSchedulingPage() {
                         </Button>
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {r.decision_note || 'Decided'}
                         {r.revision_number ? ` • rev ${r.revision_number}` : ''}
                         {r.published_at ? ` • ${new Date(r.published_at).toLocaleDateString()}` : ''}
@@ -608,22 +608,22 @@ export function ProductionSchedulingPage() {
 
       <Card title="Exception Dashboard (Canonical Events)" subtitle="Ingest, deduplicate, replay, and monitor cross-system events">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
-          <select value={eventSource} onChange={(e) => setEventSource(e.target.value as ProductionEventSource)} className="px-3 py-2 text-sm border border-gray-300 rounded-lg">
+          <select value={eventSource} onChange={(e) => setEventSource(e.target.value as ProductionEventSource)} className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg">
             {EVENT_SOURCES.map((src) => <option key={src} value={src}>{src}</option>)}
           </select>
-          <input value={externalEventType} onChange={(e) => setExternalEventType(e.target.value)} className="px-3 py-2 text-sm border border-gray-300 rounded-lg" placeholder="Event type" />
-          <input value={externalEventId} onChange={(e) => setExternalEventId(e.target.value)} className="px-3 py-2 text-sm border border-gray-300 rounded-lg" placeholder="event_id" />
-          <input value={idempotencyKey} onChange={(e) => setIdempotencyKey(e.target.value)} className="px-3 py-2 text-sm border border-gray-300 rounded-lg" placeholder="idempotency_key" />
+          <input value={externalEventType} onChange={(e) => setExternalEventType(e.target.value)} className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" placeholder="Event type" />
+          <input value={externalEventId} onChange={(e) => setExternalEventId(e.target.value)} className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" placeholder="event_id" />
+          <input value={idempotencyKey} onChange={(e) => setIdempotencyKey(e.target.value)} className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" placeholder="idempotency_key" />
           <Button onClick={ingestCanonicalEvent} loading={ingestingEvent}>Ingest Event</Button>
         </div>
-        <textarea value={eventPayloadText} onChange={(e) => setEventPayloadText(e.target.value)} className="mt-3 w-full h-20 px-3 py-2 text-xs font-mono border border-gray-300 rounded-lg" />
+        <textarea value={eventPayloadText} onChange={(e) => setEventPayloadText(e.target.value)} className="mt-3 w-full h-20 px-3 py-2 text-xs font-mono border border-gray-300 dark:border-gray-600 rounded-lg" />
 
-        <div className="mt-4 overflow-x-auto border border-gray-100 rounded-lg">
+        <div className="mt-4 overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
+              <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 {['Event ID', 'Source', 'Type', 'Status', 'Duplicate', 'Replay Count', 'Actions'].map((h) => (
-                  <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                  <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -650,14 +650,14 @@ export function ProductionSchedulingPage() {
 
       <Card title="Simulation Workspace" subtitle="Compare published schedule versions and inspect change impact">
         {versions.length === 0 ? (
-          <p className="text-sm text-gray-500">No versions published yet. Publish an approved recommendation to create versions.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No versions published yet. Publish an approved recommendation to create versions.</p>
         ) : (
           <>
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-              <select value={baseVersion ?? ''} onChange={(e) => setBaseVersion(Number(e.target.value))} className="px-3 py-2 text-sm border border-gray-300 rounded-lg">
+              <select value={baseVersion ?? ''} onChange={(e) => setBaseVersion(Number(e.target.value))} className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg">
                 {versions.map((v) => <option key={`b-${v.version_number}`} value={v.version_number}>Base v{v.version_number}</option>)}
               </select>
-              <select value={targetVersion ?? ''} onChange={(e) => setTargetVersion(Number(e.target.value))} className="px-3 py-2 text-sm border border-gray-300 rounded-lg">
+              <select value={targetVersion ?? ''} onChange={(e) => setTargetVersion(Number(e.target.value))} className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg">
                 {versions.map((v) => <option key={`t-${v.version_number}`} value={v.version_number}>Target v{v.version_number}</option>)}
               </select>
               <Button onClick={runVersionCompare} loading={comparingVersions}>Compare Versions</Button>
@@ -669,12 +669,12 @@ export function ProductionSchedulingPage() {
               </div>
             )}
 
-            <div className="mt-4 overflow-x-auto border border-gray-100 rounded-lg">
+            <div className="mt-4 overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
+                  <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     {['Version', 'Recommendation ID', 'Published At', 'Published By'].map((h) => (
-                      <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                      <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -696,42 +696,42 @@ export function ProductionSchedulingPage() {
 
       <Card title="Capacity Diagnostics" subtitle="Quick load validation against supply plan max capacity">
         {!capacitySummary ? (
-          <p className="text-sm text-gray-500">Select a supply plan to view capacity diagnostics.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Select a supply plan to view capacity diagnostics.</p>
         ) : (
           <div className="space-y-3">
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-              <div className="rounded-lg border border-gray-200 px-3 py-2">
-                <p className="text-[11px] text-gray-500">Slots</p>
-                <p className="text-sm font-semibold text-gray-900">{capacitySummary.slot_count}</p>
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Slots</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{capacitySummary.slot_count}</p>
               </div>
-              <div className="rounded-lg border border-gray-200 px-3 py-2">
-                <p className="text-[11px] text-gray-500">Planned Total Qty</p>
-                <p className="text-sm font-semibold text-gray-900">{formatNumber(capacitySummary.planned_total_qty)}</p>
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Planned Total Qty</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{formatNumber(capacitySummary.planned_total_qty)}</p>
               </div>
-              <div className="rounded-lg border border-gray-200 px-3 py-2">
-                <p className="text-[11px] text-gray-500">Capacity Max Qty</p>
-                <p className="text-sm font-semibold text-gray-900">{formatNumber(capacitySummary.capacity_max_qty)}</p>
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Capacity Max Qty</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{formatNumber(capacitySummary.capacity_max_qty)}</p>
               </div>
-              <div className="rounded-lg border border-gray-200 px-3 py-2">
-                <p className="text-[11px] text-gray-500">Utilization</p>
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Utilization</p>
                 <p className={`text-sm font-semibold ${capacitySummary.overloaded ? 'text-red-600' : 'text-emerald-600'}`}>
                   {formatPercent(capacitySummary.utilization_pct)}
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 px-3 py-2">
-                <p className="text-[11px] text-gray-500">Status</p>
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Status</p>
                 <p className={`text-sm font-semibold ${capacitySummary.overloaded ? 'text-red-600' : 'text-emerald-600'}`}>
                   {capacitySummary.overloaded ? 'Overloaded' : 'Within Capacity'}
                 </p>
               </div>
             </div>
 
-            <div className="overflow-x-auto border border-gray-100 rounded-lg">
+            <div className="overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
+                  <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     {['Workcenter', 'Line', 'Shift', 'Slots', 'Total Planned Qty'].map((h) => (
-                      <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                      <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -756,14 +756,14 @@ export function ProductionSchedulingPage() {
         {loading ? (
           <SkeletonTable rows={8} cols={8} />
         ) : rows.length === 0 ? (
-          <p className="text-sm text-gray-500">No schedule rows available. Generate a schedule first.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No schedule rows available. Generate a schedule first.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Seq', 'Workcenter', 'Line', 'Shift', 'Planned Qty', 'Start', 'End', 'Status', 'Set Status', 'Reorder'].map((h) => (
-                    <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -775,15 +775,15 @@ export function ProductionSchedulingPage() {
                     <td className="px-4 py-2.5">{r.line}</td>
                     <td className="px-4 py-2.5">{r.shift}</td>
                     <td className="px-4 py-2.5 tabular-nums">{formatNumber(r.planned_qty)}</td>
-                    <td className="px-4 py-2.5 text-gray-700">{new Date(r.planned_start_at).toLocaleString()}</td>
-                    <td className="px-4 py-2.5 text-gray-700">{new Date(r.planned_end_at).toLocaleString()}</td>
+                    <td className="px-4 py-2.5 text-gray-700 dark:text-gray-300">{new Date(r.planned_start_at).toLocaleString()}</td>
+                    <td className="px-4 py-2.5 text-gray-700 dark:text-gray-300">{new Date(r.planned_end_at).toLocaleString()}</td>
                     <td className="px-4 py-2.5"><StatusBadge status={r.status} size="sm" /></td>
                     <td className="px-4 py-2.5">
                       <select
                         value={r.status}
                         disabled={statusUpdatingId === r.id}
                         onChange={(e) => updateStatus(r.id, e.target.value as ProductionScheduleStatus)}
-                        className="px-2 py-1.5 text-xs border border-gray-300 rounded-md"
+                        className="px-2 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-md"
                       >
                         {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
                       </select>

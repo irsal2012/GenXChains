@@ -22,6 +22,9 @@
     scrollbar-width: thin;
     scrollbar-color: theme('colors.gray.300') transparent;
   }
+  .dark .scrollbar-thin {
+    scrollbar-color: theme('colors.gray.600') transparent;
+  }
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -32,15 +35,24 @@
   .scrollbar-thin::-webkit-scrollbar-thumb {
     @apply bg-gray-300 rounded-full;
   }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-gray-600;
+  }
 
   /* Skeleton shimmer */
   .skeleton {
     @apply bg-gray-200 rounded animate-pulse;
   }
+  .dark .skeleton {
+    @apply bg-gray-700;
+  }
 
   /* Card */
   .card {
     @apply bg-white rounded-xl shadow-sm border border-gray-100 p-5;
+  }
+  .dark .card {
+    @apply bg-gray-800 border-gray-700 shadow-none;
   }
 
   /* Status badges */
@@ -59,6 +71,21 @@
   .badge-low       { @apply bg-yellow-100 text-yellow-700; }
   .badge-critical  { @apply bg-red-100 text-red-700; }
   .badge-excess    { @apply bg-orange-100 text-orange-700; }
+
+  /* Dark badges: a translucent tint of the same hue keeps the status colour
+     legible against gray-800 surfaces without the glare of a -100 fill. */
+  .dark .badge-draft     { @apply bg-gray-500/20 text-gray-300; }
+  .dark .badge-submitted { @apply bg-blue-500/20 text-blue-300; }
+  .dark .badge-approved  { @apply bg-emerald-500/20 text-emerald-300; }
+  .dark .badge-rejected  { @apply bg-red-500/20 text-red-300; }
+  .dark .badge-locked    { @apply bg-purple-500/20 text-purple-300; }
+  .dark .badge-active    { @apply bg-green-500/20 text-green-300; }
+  .dark .badge-completed { @apply bg-teal-500/20 text-teal-300; }
+  .dark .badge-cancelled { @apply bg-gray-500/20 text-gray-400; }
+  .dark .badge-normal    { @apply bg-green-500/20 text-green-300; }
+  .dark .badge-low       { @apply bg-yellow-500/20 text-yellow-300; }
+  .dark .badge-critical  { @apply bg-red-500/20 text-red-300; }
+  .dark .badge-excess    { @apply bg-orange-500/20 text-orange-300; }
 }
 
 @layer utilities {

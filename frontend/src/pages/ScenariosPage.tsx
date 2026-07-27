@@ -153,7 +153,7 @@ export function ScenariosPage() {
   const typeColor: Record<string, string> = {
     what_if: 'bg-blue-50 text-blue-700',
     stress_test: 'bg-red-50 text-red-700',
-    baseline: 'bg-gray-100 text-gray-700',
+    baseline: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
     best_case: 'bg-emerald-50 text-emerald-700',
     worst_case: 'bg-red-50 text-red-700',
   }
@@ -162,8 +162,8 @@ export function ScenariosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Scenario Planning</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{total} scenarios</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Scenario Planning</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} scenarios</p>
         </div>
         {canWrite && (
           <Button icon={<Plus />} onClick={() => setShowCreate(true)}>
@@ -178,7 +178,7 @@ export function ScenariosPage() {
         </div>
       ) : scenarios.length === 0 ? (
         <Card>
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500">
             <GitBranch className="h-10 w-10 mx-auto mb-3 opacity-40" />
             <p className="text-sm">No scenarios yet. Create your first scenario.</p>
           </div>
@@ -186,30 +186,30 @@ export function ScenariosPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {scenarios.map((scenario) => (
-            <div key={scenario.id} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
+            <div key={scenario.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-gray-900 truncate">{scenario.name}</h3>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{scenario.name}</h3>
                   {scenario.description && (
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{scenario.description}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">{scenario.description}</p>
                   )}
                 </div>
                 <StatusBadge status={scenario.status} size="sm" className="ml-2 flex-shrink-0" />
               </div>
 
               <div className="flex items-center gap-2 mb-4">
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColor[scenario.scenario_type] ?? 'bg-gray-100 text-gray-700'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColor[scenario.scenario_type] ?? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
                   {scenario.scenario_type.replace(/_/g, ' ')}
                 </span>
-                <span className="text-xs text-gray-400">{formatDate(scenario.created_at)}</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(scenario.created_at)}</span>
               </div>
 
               {/* Impact metrics */}
               {scenario.results && (
                 <div className="grid grid-cols-2 gap-2 mb-4">
                   {scenario.revenue_impact != null && (
-                    <div className="bg-gray-50 rounded-lg p-2">
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                         <DollarSign className="h-3 w-3" /> Revenue
                       </p>
                       <p className={`text-sm font-semibold ${scenario.revenue_impact >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
@@ -218,8 +218,8 @@ export function ScenariosPage() {
                     </div>
                   )}
                   {scenario.service_level_impact != null && (
-                    <div className="bg-gray-50 rounded-lg p-2">
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                         <TrendingUp className="h-3 w-3" /> Service Level
                       </p>
                       <p className={`text-sm font-semibold ${scenario.service_level_impact >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
@@ -232,15 +232,15 @@ export function ScenariosPage() {
 
               {tradeoffByScenarioId[scenario.id]?.tradeoff && (
                 <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <p className="text-xs text-gray-500">Carrying Cost</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Carrying Cost</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                       {formatCurrency(tradeoffByScenarioId[scenario.id].tradeoff!.inventory_carrying_cost)}
                     </p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <p className="text-xs text-gray-500">Working Capital Δ</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Working Capital Δ</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                       {formatCurrency(tradeoffByScenarioId[scenario.id].tradeoff!.working_capital_delta)}
                     </p>
                   </div>
@@ -248,7 +248,7 @@ export function ScenariosPage() {
               )}
 
               {/* Actions */}
-              <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+              <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
                 {canWrite && scenario.status === 'draft' && (
                   <Button size="sm" variant="secondary" icon={<Play />}
                     loading={actionLoading === scenario.id}
@@ -285,74 +285,74 @@ export function ScenariosPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Scenario Name *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Scenario Name *</label>
             <input value={form.name ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., Q2 Demand Surge +20%" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Type</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Type</label>
             <select value={form.scenario_type ?? 'what_if'}
               onChange={(e) => setForm((f) => ({ ...f, scenario_type: e.target.value as CreateScenarioRequest['scenario_type'] }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               {SCENARIO_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Description</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
             <textarea value={form.description ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               rows={3}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Describe the scenario assumptions..." />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Scenario Period</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Scenario Period</label>
             <input
               type="date"
               value={String(scenarioParams.period ?? '')}
               onChange={(e) => setScenarioParam('period', e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Demand Change (%)</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Demand Change (%)</label>
               <input
                 type="number"
                 value={Number(scenarioParams.demand_change_pct ?? 0)}
                 onChange={(e) => setScenarioParam('demand_change_pct', Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Supply Capacity Change (%)</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Supply Capacity Change (%)</label>
               <input
                 type="number"
                 value={Number(scenarioParams.supply_capacity_pct ?? 0)}
                 onChange={(e) => setScenarioParam('supply_capacity_pct', Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Price Change (%)</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Price Change (%)</label>
               <input
                 type="number"
                 value={Number(scenarioParams.price_change_pct ?? 0)}
                 onChange={(e) => setScenarioParam('price_change_pct', Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Inventory Release (%)</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Inventory Release (%)</label>
               <input
                 type="number"
                 value={Number(scenarioParams.inventory_release_pct ?? 0)}
                 onChange={(e) => setScenarioParam('inventory_release_pct', Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>

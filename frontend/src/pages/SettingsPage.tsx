@@ -61,36 +61,36 @@ export function SettingsPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Manage your account and preferences</p>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Manage your account and preferences</p>
       </div>
 
       {/* Profile */}
       <Card title="Profile" subtitle="Update your personal information"
-        actions={<User className="h-4 w-4 text-gray-400" />}>
+        actions={<User className="h-4 w-4 text-gray-400 dark:text-gray-500" />}>
         <div className="space-y-4">
-          <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-4 pb-4 border-b border-gray-100 dark:border-gray-700">
             <div className="h-14 w-14 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold">
               {getUserInitial(user?.full_name)}
             </div>
             <div>
-              <p className="font-medium text-gray-900">{user?.full_name}</p>
-              <p className="text-sm text-gray-500">{user?.email}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{formatRole(user?.role ?? '')} · Member since {user?.created_at ? formatDate(user.created_at, 'MMM yyyy') : '—'}</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">{user?.full_name}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{formatRole(user?.role ?? '')} · Member since {user?.created_at ? formatDate(user.created_at, 'MMM yyyy') : '—'}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Full Name</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Full Name</label>
               <input value={profileForm.full_name}
                 onChange={(e) => setProfileForm((f) => ({ ...f, full_name: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Department</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Department</label>
               <input value={profileForm.department}
                 onChange={(e) => setProfileForm((f) => ({ ...f, department: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="e.g., Supply Chain" />
             </div>
           </div>
@@ -104,26 +104,26 @@ export function SettingsPage() {
 
       {/* Password */}
       <Card title="Security" subtitle="Change your password"
-        actions={<Lock className="h-4 w-4 text-gray-400" />}>
+        actions={<Lock className="h-4 w-4 text-gray-400 dark:text-gray-500" />}>
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Current Password</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Current Password</label>
             <input type="password" value={passwordForm.current_password}
               onChange={(e) => setPasswordForm((f) => ({ ...f, current_password: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">New Password</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">New Password</label>
               <input type="password" value={passwordForm.new_password}
                 onChange={(e) => setPasswordForm((f) => ({ ...f, new_password: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Confirm Password</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Confirm Password</label>
               <input type="password" value={passwordForm.confirm_password}
                 onChange={(e) => setPasswordForm((f) => ({ ...f, confirm_password: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div className="flex justify-end">
@@ -136,11 +136,11 @@ export function SettingsPage() {
 
       {/* Appearance */}
       <Card title="Appearance" subtitle="Customize the interface"
-        actions={<Palette className="h-4 w-4 text-gray-400" />}>
+        actions={<Palette className="h-4 w-4 text-gray-400 dark:text-gray-500" />}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-900">Theme</p>
-            <p className="text-xs text-gray-500">Choose between light and dark mode</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Theme</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Choose between light and dark mode</p>
           </div>
           <div className="flex items-center gap-2">
             {(['light', 'dark'] as const).map((t) => (
@@ -148,7 +148,7 @@ export function SettingsPage() {
                 key={t}
                 onClick={() => setTheme(t)}
                 className={`px-4 py-2 text-sm rounded-lg font-medium transition-colors capitalize ${
-                  theme === t ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  theme === t ? 'bg-gray-900 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {t}

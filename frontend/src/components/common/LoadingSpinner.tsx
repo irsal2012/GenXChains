@@ -14,13 +14,13 @@ export function LoadingSpinner({ size = 'md', message, fullPage, className }: Lo
   const content = (
     <div className={clsx('flex flex-col items-center justify-center gap-3', className)}>
       <Loader2 className={clsx('animate-spin text-blue-600', sizes[size])} />
-      {message && <p className="text-sm text-gray-500">{message}</p>}
+      {message && <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>}
     </div>
   )
 
   if (fullPage) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white/80 z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-gray-800/80 z-50">
         {content}
       </div>
     )
@@ -31,10 +31,10 @@ export function LoadingSpinner({ size = 'md', message, fullPage, className }: Lo
 
 export function SkeletonCard({ rows = 3 }: { rows?: number }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-3 animate-pulse">
-      <div className="h-4 bg-gray-200 rounded w-1/3" />
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 space-y-3 animate-pulse">
+      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="h-3 bg-gray-100 rounded" style={{ width: `${70 + (i % 3) * 10}%` }} />
+        <div key={i} className="h-3 bg-gray-100 dark:bg-gray-700 rounded" style={{ width: `${70 + (i % 3) * 10}%` }} />
       ))}
     </div>
   )
@@ -43,11 +43,11 @@ export function SkeletonCard({ rows = 3 }: { rows?: number }) {
 export function SkeletonTable({ rows = 5, cols = 5 }: { rows?: number; cols?: number }) {
   return (
     <div className="animate-pulse">
-      <div className="h-10 bg-gray-100 rounded mb-2" />
+      <div className="h-10 bg-gray-100 dark:bg-gray-700 rounded mb-2" />
       {Array.from({ length: rows }).map((_, r) => (
         <div key={r} className="flex gap-4 py-3 border-b border-gray-50">
           {Array.from({ length: cols }).map((_, c) => (
-            <div key={c} className="h-4 bg-gray-100 rounded flex-1" />
+            <div key={c} className="h-4 bg-gray-100 dark:bg-gray-700 rounded flex-1" />
           ))}
         </div>
       ))}

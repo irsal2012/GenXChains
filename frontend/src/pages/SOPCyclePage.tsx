@@ -33,7 +33,7 @@ function StepIndicator({ step, status, current }: { step: number; status: SOPSte
   const isDone = status === 'completed'
 
   return (
-    <div className={`flex items-center gap-2 ${isActive ? 'text-blue-600' : isDone ? 'text-emerald-600' : 'text-gray-400'}`}>
+    <div className={`flex items-center gap-2 ${isActive ? 'text-blue-600' : isDone ? 'text-emerald-600' : 'text-gray-400 dark:text-gray-500'}`}>
       {isDone ? (
         <CheckCircle className="h-5 w-5 flex-shrink-0" />
       ) : isActive ? (
@@ -41,7 +41,7 @@ function StepIndicator({ step, status, current }: { step: number; status: SOPSte
       ) : (
         <Circle className="h-5 w-5 flex-shrink-0" />
       )}
-      <span className={`text-xs font-medium ${isActive ? 'text-blue-700' : isDone ? 'text-emerald-700' : 'text-gray-500'}`}>
+      <span className={`text-xs font-medium ${isActive ? 'text-blue-700' : isDone ? 'text-emerald-700' : 'text-gray-500 dark:text-gray-400'}`}>
         {STEP_NAMES[step - 1]}
       </span>
     </div>
@@ -212,8 +212,8 @@ export function SOPCyclePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">S&OP Cycles</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{total} cycles total</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">S&OP Cycles</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} cycles total</p>
         </div>
         {canManage && (
           <Button icon={<Plus />} onClick={() => setShowCreate(true)}>
@@ -228,7 +228,7 @@ export function SOPCyclePage() {
         </div>
       ) : cycles.length === 0 ? (
         <Card>
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500">
             <p className="text-sm">No S&OP cycles yet. Create your first cycle.</p>
           </div>
         </Card>
@@ -270,14 +270,14 @@ export function SOPCyclePage() {
               {/* Step progress */}
               <div className="mt-2">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs text-gray-500">Step {cycle.current_step} of 5</p>
-                  <div className="h-1.5 flex-1 mx-4 bg-gray-100 rounded-full overflow-hidden">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Step {cycle.current_step} of 5</p>
+                  <div className="h-1.5 flex-1 mx-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-blue-500 rounded-full transition-all"
                       style={{ width: `${((cycle.current_step - 1) / 5) * 100}%` }}
                     />
                   </div>
-                  <p className="text-xs text-gray-500">{Math.round(((cycle.current_step - 1) / 5) * 100)}%</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{Math.round(((cycle.current_step - 1) / 5) * 100)}%</p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -292,13 +292,13 @@ export function SOPCyclePage() {
                       <div key={step} className={`p-3 rounded-lg border ${
                         step === cycle.current_step ? 'border-blue-200 bg-blue-50' :
                         status === 'completed' ? 'border-emerald-200 bg-emerald-50' :
-                        'border-gray-100 bg-gray-50'
+                        'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'
                       }`}>
                         <StepIndicator step={step} status={status} current={cycle.current_step} />
                         {dueDate && (
-                          <p className="text-xs text-gray-400 mt-1 ml-7">Due {formatDate(dueDate, 'MMM d')}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 ml-7">Due {formatDate(dueDate, 'MMM d')}</p>
                         )}
-                        <p className="text-xs text-gray-400 mt-1 ml-7">Owner: {ownerName(ownerId)}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 ml-7">Owner: {ownerName(ownerId)}</p>
                       </div>
                     )
                   })}
@@ -318,7 +318,7 @@ export function SOPCyclePage() {
                 )}
 
                 {cycle.notes && (
-                  <p className="text-xs text-gray-500 mt-3 italic">{cycle.notes}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 italic">{cycle.notes}</p>
                 )}
 
                 {scorecardByCycleId[cycle.id] && (
@@ -371,36 +371,36 @@ export function SOPCyclePage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Cycle Name *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Cycle Name *</label>
             <input value={form.cycle_name ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, cycle_name: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., March 2026 S&OP" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Period *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Period *</label>
             <input type="month" value={form.period?.slice(0, 7) ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, period: e.target.value + '-01' }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4, 5].map((step) => (
               <div key={step}>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Step {step} Due Date
                 </label>
                 <input type="date"
                   onChange={(e) => setForm((f) => ({ ...f, [`step_${step}_due_date`]: e.target.value }))}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
             ))}
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Notes</label>
             <textarea value={form.notes ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
               rows={2}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
           </div>
         </div>
       </Modal>
@@ -423,20 +423,20 @@ export function SOPCyclePage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Cycle Name</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Cycle Name</label>
             <input
               value={editForm.cycle_name ?? ''}
               onChange={(e) => setEditForm((prev) => ({ ...prev, cycle_name: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Period</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Period</label>
             <input
               type="month"
               value={editForm.period?.slice(0, 7) ?? ''}
               onChange={(e) => setEditForm((prev) => ({ ...prev, period: `${e.target.value}-01` }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
 
@@ -445,23 +445,23 @@ export function SOPCyclePage() {
               const dueKey = `step_${step}_due_date` as keyof UpdateSOPCycleRequest
               const ownerKey = `step_${step}_owner_id` as keyof UpdateSOPCycleRequest
               return (
-                <div key={`edit-step-${step}`} className="rounded-lg border border-gray-100 p-3">
-                  <p className="text-xs font-medium text-gray-700 mb-2">Step {step}</p>
-                  <label className="block text-xs text-gray-500 mb-1">Due Date</label>
+                <div key={`edit-step-${step}`} className="rounded-lg border border-gray-100 dark:border-gray-700 p-3">
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Step {step}</p>
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Due Date</label>
                   <input
                     type="date"
                     value={String(editForm[dueKey] ?? '')}
                     onChange={(e) => setEditForm((prev) => ({ ...prev, [dueKey]: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded mb-2"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded mb-2"
                   />
-                  <label className="block text-xs text-gray-500 mb-1">Owner</label>
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Owner</label>
                   <select
                     value={Number(editForm[ownerKey] ?? 0)}
                     onChange={(e) => setEditForm((prev) => ({
                       ...prev,
                       [ownerKey]: Number(e.target.value) || undefined,
                     }))}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded"
                   >
                     <option value={0}>Unassigned</option>
                     {users.map((u) => (
@@ -474,30 +474,30 @@ export function SOPCyclePage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Decisions</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Decisions</label>
             <textarea
               rows={3}
               value={editForm.decisions ?? ''}
               onChange={(e) => setEditForm((prev) => ({ ...prev, decisions: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Action Items</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Action Items</label>
             <textarea
               rows={3}
               value={editForm.action_items ?? ''}
               onChange={(e) => setEditForm((prev) => ({ ...prev, action_items: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Notes</label>
             <textarea
               rows={2}
               value={editForm.notes ?? ''}
               onChange={(e) => setEditForm((prev) => ({ ...prev, notes: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
         </div>

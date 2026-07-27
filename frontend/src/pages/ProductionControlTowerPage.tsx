@@ -169,18 +169,18 @@ export function ProductionControlTowerPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Production Control Tower</h1>
-        <p className="text-sm text-gray-500">Exception dashboard, simulation workspace, and recommendation audit controls.</p>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Production Control Tower</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Exception dashboard, simulation workspace, and recommendation audit controls.</p>
       </div>
 
       <Card title="Control Tower Filters" subtitle="Scope recommendations and simulations to a planning context">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={selectedSupplyPlanId ?? ''} onChange={(e) => setSelectedSupplyPlanId(Number(e.target.value))}>
+          <select className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={selectedSupplyPlanId ?? ''} onChange={(e) => setSelectedSupplyPlanId(Number(e.target.value))}>
             {supplyPlans.map((p) => (
               <option key={p.id} value={p.id}>#{p.id} • Product {p.product_id} • {p.period.slice(0, 7)}</option>
             ))}
           </select>
-          <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={recommendationStatus} onChange={(e) => setRecommendationStatus(e.target.value as AgenticRecommendationStatus | '')}>
+          <select className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={recommendationStatus} onChange={(e) => setRecommendationStatus(e.target.value as AgenticRecommendationStatus | '')}>
             <option value="">All recommendation states</option>
             <option value="pending_approval">Pending Approval</option>
             <option value="approved">Approved</option>
@@ -195,34 +195,34 @@ export function ProductionControlTowerPage() {
             Refresh Control Tower
           </Button>
         </div>
-        {selectedPlan && <p className="mt-2 text-xs text-gray-500">Selected plan #{selectedPlan.id} • Planned Qty {selectedPlan.planned_prod_qty ?? 0}</p>}
+        {selectedPlan && <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Selected plan #{selectedPlan.id} • Planned Qty {selectedPlan.planned_prod_qty ?? 0}</p>}
       </Card>
 
       <Card title="Exception Dashboard" subtitle="Canonical ingest, idempotency checks, and replay actions">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
-          <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={eventSource} onChange={(e) => setEventSource(e.target.value as ProductionEventSource)}>
+          <select className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={eventSource} onChange={(e) => setEventSource(e.target.value as ProductionEventSource)}>
             {EVENT_SOURCES.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
-          <input className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={externalEventType} onChange={(e) => setExternalEventType(e.target.value)} placeholder="event_type" />
-          <input className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={externalEventId} onChange={(e) => setExternalEventId(e.target.value)} placeholder="event_id" title="Unique ID from source system" />
-          <input className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={idempotencyKey} onChange={(e) => setIdempotencyKey(e.target.value)} placeholder="idempotency_key" title="Used to detect duplicate submits" />
+          <input className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={externalEventType} onChange={(e) => setExternalEventType(e.target.value)} placeholder="event_type" />
+          <input className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={externalEventId} onChange={(e) => setExternalEventId(e.target.value)} placeholder="event_id" title="Unique ID from source system" />
+          <input className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={idempotencyKey} onChange={(e) => setIdempotencyKey(e.target.value)} placeholder="idempotency_key" title="Used to detect duplicate submits" />
           <Button onClick={ingestEvent} loading={ingesting}>Ingest Event</Button>
         </div>
-        <textarea className="mt-3 w-full h-20 px-3 py-2 text-xs font-mono border border-gray-300 rounded-lg" value={eventPayloadText} onChange={(e) => setEventPayloadText(e.target.value)} />
+        <textarea className="mt-3 w-full h-20 px-3 py-2 text-xs font-mono border border-gray-300 dark:border-gray-600 rounded-lg" value={eventPayloadText} onChange={(e) => setEventPayloadText(e.target.value)} />
 
         {events.length === 0 ? (
-          <div className="mt-4 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+          <div className="mt-4 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-6 text-center text-sm text-gray-500 dark:text-gray-400">
             <AlertTriangle className="h-5 w-5 mx-auto mb-1 text-amber-500" />
             No events in feed yet.
           </div>
         ) : (
           <>
-          <div className="mt-4 overflow-x-auto border border-gray-100 rounded-lg hidden md:block">
+          <div className="mt-4 overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg hidden md:block">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Event', 'Source', 'Type', 'Status', 'Duplicate', 'Replay', 'Action'].map((h) => (
-                    <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -248,15 +248,15 @@ export function ProductionControlTowerPage() {
 
           <div className="mt-4 grid grid-cols-1 gap-3 md:hidden">
             {events.map((e) => (
-              <div key={e.event_id} className="rounded-lg border border-gray-200 p-3 space-y-2">
+              <div key={e.event_id} className="rounded-lg border border-gray-200 dark:border-gray-700 p-3 space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs font-mono text-gray-700 break-all">{e.event_id}</p>
+                  <p className="text-xs font-mono text-gray-700 dark:text-gray-300 break-all">{e.event_id}</p>
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-xs ${statusPill(e.processing_status)}`}>{e.processing_status}</span>
                 </div>
-                <p className="text-xs text-gray-600">{e.event_source} • {e.event_type}</p>
-                <p className="text-xs text-gray-600">Duplicate: {e.duplicate ? `yes (${e.duplicate_of_event_id})` : 'no'}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{e.event_source} • {e.event_type}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Duplicate: {e.duplicate ? `yes (${e.duplicate_of_event_id})` : 'no'}</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-600">Replay count: {e.replay_count}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Replay count: {e.replay_count}</p>
                   <Button size="sm" variant="outline" loading={busyEventId === e.event_id} onClick={() => replayEvent(e.event_id)}>
                     Replay
                   </Button>
@@ -270,15 +270,15 @@ export function ProductionControlTowerPage() {
 
       <Card title="Recommendation Audit Viewer" subtitle="Planner actions with human-in-the-loop controls">
         {recommendations.length === 0 ? (
-          <p className="text-sm text-gray-500">No recommendations found for the selected filters.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No recommendations found for the selected filters.</p>
         ) : (
           <>
-          <div className="overflow-x-auto border border-gray-100 rounded-lg hidden md:block">
+          <div className="overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg hidden md:block">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Created', 'Event', 'Status', 'Revision', 'Summary', 'Actions'].map((h) => (
-                    <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -299,7 +299,7 @@ export function ProductionControlTowerPage() {
                       ) : r.status === 'approved' ? (
                         <Button size="sm" loading={busyRecommendationId === r.recommendation_id} onClick={() => publish(r.recommendation_id)}>Publish</Button>
                       ) : (
-                        <span className="text-xs text-gray-500">{r.decision_note ?? 'Finalized'}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{r.decision_note ?? 'Finalized'}</span>
                       )}
                     </td>
                   </tr>
@@ -310,14 +310,14 @@ export function ProductionControlTowerPage() {
 
           <div className="grid grid-cols-1 gap-3 md:hidden">
             {recommendations.map((r) => (
-              <div key={r.recommendation_id} className="rounded-lg border border-gray-200 p-3 space-y-2">
+              <div key={r.recommendation_id} className="rounded-lg border border-gray-200 dark:border-gray-700 p-3 space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs text-gray-500">{new Date(r.created_at).toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{new Date(r.created_at).toLocaleString()}</p>
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-xs ${statusPill(r.status)}`}>{r.status}</span>
                 </div>
-                <p className="text-sm font-medium text-gray-900">{r.event_type}</p>
-                <p className="text-xs text-gray-600 line-clamp-2">{r.recommendation_summary}</p>
-                <p className="text-xs text-gray-500">Revision: {r.revision_number ?? 1}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{r.event_type}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{r.recommendation_summary}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Revision: {r.revision_number ?? 1}</p>
                 <div>
                   {r.status === 'pending_approval' ? (
                     <div className="flex gap-2">
@@ -327,7 +327,7 @@ export function ProductionControlTowerPage() {
                   ) : r.status === 'approved' ? (
                     <Button size="sm" className="w-full" loading={busyRecommendationId === r.recommendation_id} onClick={() => publish(r.recommendation_id)}>Publish</Button>
                   ) : (
-                    <p className="text-xs text-gray-500">{r.decision_note ?? 'Finalized'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{r.decision_note ?? 'Finalized'}</p>
                   )}
                 </div>
               </div>
@@ -339,14 +339,14 @@ export function ProductionControlTowerPage() {
 
       <Card title="Simulation Workspace" subtitle="Version compare for published schedule snapshots">
         {versions.length === 0 ? (
-          <p className="text-sm text-gray-500">No versions available yet. Publish an approved recommendation first.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No versions available yet. Publish an approved recommendation first.</p>
         ) : (
           <>
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-              <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={baseVersion ?? ''} onChange={(e) => setBaseVersion(Number(e.target.value))}>
+              <select className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={baseVersion ?? ''} onChange={(e) => setBaseVersion(Number(e.target.value))}>
                 {versions.map((v) => <option key={`base-${v.version_number}`} value={v.version_number}>Base v{v.version_number}</option>)}
               </select>
-              <select className="px-3 py-2 text-sm border border-gray-300 rounded-lg" value={targetVersion ?? ''} onChange={(e) => setTargetVersion(Number(e.target.value))}>
+              <select className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg" value={targetVersion ?? ''} onChange={(e) => setTargetVersion(Number(e.target.value))}>
                 {versions.map((v) => <option key={`target-${v.version_number}`} value={v.version_number}>Target v{v.version_number}</option>)}
               </select>
               <Button icon={<GitCompare className="h-4 w-4" />} loading={comparing} onClick={compareVersions}>Compare Versions</Button>

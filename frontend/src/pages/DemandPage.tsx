@@ -22,10 +22,12 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts'
+import { useChartTheme } from '@/utils/chartTheme'
 
 const STATUSES = ['', 'draft', 'submitted', 'approved', 'rejected', 'locked']
 
 export function DemandPage() {
+  const chart = useChartTheme()
   const { user } = useAuthStore()
   const canWrite = can(user?.role, 'demand.plan.write')
   const canApprove = can(user?.role, 'demand.plan.approve')
@@ -228,8 +230,8 @@ export function DemandPage() {
     <div className="space-y-6 pt-2">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Demand Planning</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{total} plans total</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Demand Planning</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} plans total</p>
         </div>
         {canWrite && (
           <Button icon={<Plus />} onClick={() => setShowCreate(true)}>
@@ -243,11 +245,11 @@ export function DemandPage() {
         <div className="space-y-4">
           <div className="flex flex-wrap items-end gap-3">
             <div className="min-w-[240px]">
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Historical View Product</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Historical View Product</label>
               <select
                 value={historyProductId ?? ''}
                 onChange={(e) => setHistoryProductId(e.target.value ? Number(e.target.value) : undefined)}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select product...</option>
                 {products.map((product) => (
@@ -259,11 +261,11 @@ export function DemandPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Range</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Range</label>
               <select
                 value={historyRangeMonths}
                 onChange={(e) => setHistoryRangeMonths(Number(e.target.value))}
-                className="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value={12}>Last 12 months</option>
                 <option value={24}>Last 24 months</option>
@@ -271,12 +273,12 @@ export function DemandPage() {
               </select>
             </div>
 
-            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <input
                 type="checkbox"
                 checked={historyOnlyActuals}
                 onChange={(e) => setHistoryOnlyActuals(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
               />
               Only periods with actuals
             </label>
@@ -293,25 +295,25 @@ export function DemandPage() {
           </div>
 
           {!historyProductId ? (
-            <p className="text-sm text-gray-500">Select a product to view its historical demand trend.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Select a product to view its historical demand trend.</p>
           ) : historyLoading ? (
             <SkeletonTable rows={6} cols={4} />
           ) : filteredHistoryPlans.length === 0 ? (
-            <p className="text-sm text-gray-500">No historical data found for the selected product and range.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">No historical data found for the selected product and range.</p>
           ) : (
             <>
-              <p className="text-xs text-gray-500">Selected Product ID: <span className="font-medium text-gray-700">{historyProductId}</span></p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Selected Product ID: <span className="font-medium text-gray-700 dark:text-gray-300">{historyProductId}</span></p>
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={historyChartData}
                     margin={{ top: 16, right: 24, left: 8, bottom: 12 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="period" minTickGap={16} tickMargin={8} />
-                    <YAxis width={56} />
-                    <Tooltip />
-                    <Legend />
+                    <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                    <XAxis dataKey="period" minTickGap={16} tickMargin={8} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
+                    <YAxis width={56} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
+                    <Tooltip contentStyle={chart.tooltipContent} labelStyle={chart.tooltipLabel} />
+                    <Legend wrapperStyle={chart.legend} />
                     <Line type="monotone" dataKey="actual_qty" name="Actual Qty" stroke="#16a34a" strokeWidth={2} dot={false} connectNulls={false} />
                     <Line type="monotone" dataKey="forecast_qty" name="Forecast Qty" stroke="#2563eb" strokeWidth={2} dot={false} />
                     <Line type="monotone" dataKey="consensus_qty" name="Consensus Qty" stroke="#f59e0b" strokeWidth={2} dot={false} connectNulls={false} />
@@ -319,12 +321,12 @@ export function DemandPage() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="overflow-x-auto border border-gray-100 rounded-lg">
+              <div className="overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-100 bg-gray-50">
+                    <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                       {['Period', 'Forecast Qty', 'Actual Qty', 'Consensus Qty'].map((h) => (
-                        <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                        <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                           {h}
                         </th>
                       ))}
@@ -333,10 +335,10 @@ export function DemandPage() {
                   <tbody className="divide-y divide-gray-50">
                     {filteredHistoryPlans.map((plan) => (
                       <tr key={plan.id}>
-                        <td className="px-4 py-2.5 text-gray-700">{formatPeriod(plan.period)}</td>
-                        <td className="px-4 py-2.5 text-gray-900 tabular-nums">{formatNumber(plan.forecast_qty)}</td>
-                        <td className="px-4 py-2.5 text-gray-900 tabular-nums">{plan.actual_qty != null ? formatNumber(plan.actual_qty) : '—'}</td>
-                        <td className="px-4 py-2.5 text-gray-900 tabular-nums">{plan.consensus_qty != null ? formatNumber(plan.consensus_qty) : '—'}</td>
+                        <td className="px-4 py-2.5 text-gray-700 dark:text-gray-300">{formatPeriod(plan.period)}</td>
+                        <td className="px-4 py-2.5 text-gray-900 dark:text-gray-100 tabular-nums">{formatNumber(plan.forecast_qty)}</td>
+                        <td className="px-4 py-2.5 text-gray-900 dark:text-gray-100 tabular-nums">{plan.actual_qty != null ? formatNumber(plan.actual_qty) : '—'}</td>
+                        <td className="px-4 py-2.5 text-gray-900 dark:text-gray-100 tabular-nums">{plan.consensus_qty != null ? formatNumber(plan.consensus_qty) : '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -350,20 +352,20 @@ export function DemandPage() {
       <Card padding={false}>
         <div className="flex items-center gap-3 p-4">
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search plans..."
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-400" />
+            <Filter className="h-4 w-4 text-gray-400 dark:text-gray-500" />
             <select
               value={filters.status ?? ''}
               onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value || undefined, page: 1 }))}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {STATUSES.map((s) => (
                 <option key={s} value={s}>{s ? s.charAt(0).toUpperCase() + s.slice(1) : 'All Statuses'}</option>
@@ -376,16 +378,16 @@ export function DemandPage() {
         {loading ? (
           <div className="p-4"><SkeletonTable rows={8} cols={8} /></div>
         ) : plans.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500">
             <p className="text-sm">No demand plans found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Product', 'Period', 'Region', 'Forecast Qty', 'Actual Qty', 'Consensus Qty', 'Status', 'Actions'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                       {h}
                     </th>
                   ))}
@@ -393,18 +395,18 @@ export function DemandPage() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {plans.map((plan) => (
-                  <tr key={plan.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                  <tr key={plan.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
                       <p>{plan.product?.name ?? `Product #${plan.product_id}`}</p>
-                      <p className="text-xs text-gray-400">ID: {plan.product_id}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">ID: {plan.product_id}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{formatPeriod(plan.period)}</td>
-                    <td className="px-4 py-3 text-gray-600">{plan.region}</td>
-                    <td className="px-4 py-3 text-gray-900 tabular-nums">{formatNumber(plan.forecast_qty)}</td>
-                    <td className="px-4 py-3 text-gray-900 tabular-nums">
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatPeriod(plan.period)}</td>
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{plan.region}</td>
+                    <td className="px-4 py-3 text-gray-900 dark:text-gray-100 tabular-nums">{formatNumber(plan.forecast_qty)}</td>
+                    <td className="px-4 py-3 text-gray-900 dark:text-gray-100 tabular-nums">
                       {plan.actual_qty != null ? formatNumber(plan.actual_qty) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-gray-900 tabular-nums">
+                    <td className="px-4 py-3 text-gray-900 dark:text-gray-100 tabular-nums">
                       {plan.consensus_qty != null ? formatNumber(plan.consensus_qty) : '—'}
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={plan.status} size="sm" /></td>
@@ -444,7 +446,7 @@ export function DemandPage() {
                           <button
                             onClick={() => handleDelete(plan.id)}
                             disabled={actionLoading === plan.id}
-                            className="p-1.5 rounded text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                            className="p-1.5 rounded text-gray-500 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -461,8 +463,8 @@ export function DemandPage() {
 
         {/* Pagination */}
         {total > (filters.page_size ?? 20) && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Showing {((filters.page ?? 1) - 1) * (filters.page_size ?? 20) + 1}–{Math.min((filters.page ?? 1) * (filters.page_size ?? 20), total)} of {total}
             </p>
             <div className="flex gap-2">
@@ -499,58 +501,58 @@ export function DemandPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Product ID *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Product ID *</label>
             <input
               type="number"
               value={form.product_id ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, product_id: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter product ID"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Period *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Period *</label>
             <input
               type="month"
               value={form.period ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, period: e.target.value + '-01' }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Region</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Region</label>
               <input
                 value={form.region ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, region: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Channel</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Channel</label>
               <input
                 value={form.channel ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, channel: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Forecast Quantity *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Forecast Quantity *</label>
             <input
               type="number"
               value={form.forecast_qty ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, forecast_qty: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Notes</label>
             <textarea
               value={form.notes ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
               rows={3}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
         </div>

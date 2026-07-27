@@ -162,8 +162,8 @@ export function SupplyPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Supply Planning</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{total} plans total</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Supply Planning</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{total} plans total</p>
         </div>
         {canWrite && (
           <Button
@@ -181,18 +181,18 @@ export function SupplyPage() {
       <Card padding={false}>
         <div className="flex items-center gap-3 p-4">
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <input
               placeholder="Search plans..."
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-400" />
+            <Filter className="h-4 w-4 text-gray-400 dark:text-gray-500" />
             <select
               value={filters.status ?? ''}
               onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value || undefined, page: 1 }))}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {STATUSES.map((s) => (
                 <option key={s} value={s}>{s ? s.charAt(0).toUpperCase() + s.slice(1) : 'All Statuses'}</option>
@@ -204,30 +204,30 @@ export function SupplyPage() {
         {loading ? (
           <div className="p-4"><SkeletonTable rows={8} cols={7} /></div>
         ) : plans.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500">
             <p className="text-sm">No supply plans found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {['Product', 'Period', 'Location', 'Planned Qty', 'Capacity Max', 'Supplier', 'Status', 'Actions'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {plans.map((plan) => (
-                  <tr key={plan.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                  <tr key={plan.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
                       {plan.product?.name ?? `Product #${plan.product_id}`}
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{formatPeriod(plan.period)}</td>
-                    <td className="px-4 py-3 text-gray-600">{plan.location}</td>
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatPeriod(plan.period)}</td>
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{plan.location}</td>
                     <td className="px-4 py-3 tabular-nums">{plan.planned_prod_qty != null ? formatNumber(plan.planned_prod_qty) : '—'}</td>
                     <td className="px-4 py-3 tabular-nums">{plan.capacity_max != null ? formatNumber(plan.capacity_max) : '—'}</td>
-                    <td className="px-4 py-3 text-gray-600">{plan.supplier_name ?? '—'}</td>
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{plan.supplier_name ?? '—'}</td>
                     <td className="px-4 py-3"><StatusBadge status={plan.status} size="sm" /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
@@ -259,8 +259,8 @@ export function SupplyPage() {
         )}
 
         {total > (filters.page_size ?? 20) && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-            <p className="text-xs text-gray-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Showing {((filters.page ?? 1) - 1) * (filters.page_size ?? 20) + 1}–{Math.min((filters.page ?? 1) * (filters.page_size ?? 20), total)} of {total}
             </p>
             <div className="flex gap-2">
@@ -279,20 +279,20 @@ export function SupplyPage() {
         actions={
           <div className="flex items-end gap-2">
             <div>
-              <label className="block text-[11px] font-medium text-gray-600 mb-1">Period</label>
+              <label className="block text-[11px] font-medium text-gray-600 dark:text-gray-400 mb-1">Period</label>
               <input
                 type="month"
                 value={gapPeriod}
                 onChange={(e) => setGapPeriod(e.target.value)}
-                className="px-2.5 py-1.5 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-2.5 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-[11px] font-medium text-gray-600 mb-1">Product</label>
+              <label className="block text-[11px] font-medium text-gray-600 dark:text-gray-400 mb-1">Product</label>
               <select
                 value={gapProductId ?? ''}
                 onChange={(e) => setGapProductId(e.target.value ? Number(e.target.value) : undefined)}
-                className="px-2.5 py-1.5 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[260px]"
+                className="px-2.5 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[260px]"
               >
                 <option value="">All Products</option>
                 {products.map((product) => (
@@ -312,18 +312,18 @@ export function SupplyPage() {
           <SkeletonTable rows={6} cols={10} />
         ) : gapAnalysis.length === 0 ? (
           <div className="space-y-1">
-            <p className="text-sm text-gray-500">No gap analysis data found for the selected filters.</p>
-            <p className="text-xs text-gray-400">
+            <p className="text-sm text-gray-500 dark:text-gray-400">No gap analysis data found for the selected filters.</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">
               This usually means there are no demand plans for
               {gapPeriod ? ` ${gapPeriod}-01` : ' the selected period'}.
               Try Period: <span className="font-medium">2026-01</span>, Product: <span className="font-medium">All Products</span>, then click Refresh.
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto border border-gray-100 rounded-lg">
+          <div className="overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-lg">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
+                <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                   {[
                     'Product',
                     'Period',
@@ -342,7 +342,7 @@ export function SupplyPage() {
                     'Status',
                     'Action',
                   ].map((h) => (
-                    <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                    <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                       {h}
                     </th>
                   ))}
@@ -351,16 +351,16 @@ export function SupplyPage() {
               <tbody className="divide-y divide-gray-50">
                 {gapAnalysis.map((item) => (
                   <tr key={`${item.product_id}-${item.period}`}>
-                    <td className="px-4 py-2.5 text-gray-800">
+                    <td className="px-4 py-2.5 text-gray-800 dark:text-gray-200">
                       <p className="font-medium">{item.product_name}</p>
-                      <p className="text-xs text-gray-500">{item.sku}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{item.sku}</p>
                     </td>
-                    <td className="px-4 py-2.5 text-gray-700">{formatPeriod(item.period)}</td>
+                    <td className="px-4 py-2.5 text-gray-700 dark:text-gray-300">{formatPeriod(item.period)}</td>
                     <td className="px-4 py-2.5 tabular-nums">{formatNumber(item.consensus_demand_qty ?? item.demand_qty)}</td>
                     <td className="px-4 py-2.5 tabular-nums">{formatNumber(item.planned_production_qty ?? item.planned_supply_qty)}</td>
                     <td className="px-4 py-2.5 tabular-nums">{formatNumber(item.actual_production_qty)}</td>
                     <td className="px-4 py-2.5 tabular-nums">{formatNumber(item.inventory_available_qty)}</td>
-                    <td className="px-4 py-2.5 tabular-nums font-medium text-gray-900">{formatNumber(item.effective_supply_qty)}</td>
+                    <td className="px-4 py-2.5 tabular-nums font-medium text-gray-900 dark:text-gray-100">{formatNumber(item.effective_supply_qty)}</td>
                     <td className="px-4 py-2.5 tabular-nums">{formatNumber(item.additional_prod_required_qty)}</td>
                     <td className={`px-4 py-2.5 tabular-nums font-medium ${item.plan_gap_qty < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                       {formatNumber(item.plan_gap_qty)}
@@ -391,7 +391,7 @@ export function SupplyPage() {
                             : 'Adjust Plan'}
                         </Button>
                       ) : (
-                        <span className="text-xs text-gray-400">No edit permission</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">No edit permission</span>
                       )}
                     </td>
                   </tr>
@@ -422,44 +422,44 @@ export function SupplyPage() {
             </div>
           )}
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Product ID *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Product ID *</label>
             <input type="number" value={form.product_id ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, product_id: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter product ID" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Period *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Period *</label>
             <input type="month" value={form.period?.slice(0, 7) ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, period: e.target.value + '-01' }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Location</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Location</label>
               <input value={form.location ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Supplier</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Supplier</label>
               <input value={form.supplier_name ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, supplier_name: e.target.value }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Planned Qty</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Planned Qty</label>
               <input type="number" value={form.planned_prod_qty ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, planned_prod_qty: Number(e.target.value) }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">Capacity Max</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Capacity Max</label>
               <input type="number" value={form.capacity_max ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, capacity_max: Number(e.target.value) }))}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
         </div>

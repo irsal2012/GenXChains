@@ -34,6 +34,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { useChartTheme } from '@/utils/chartTheme'
 
 const MODEL_TYPES = [
   { value: 'moving_average', label: 'Moving Average' },
@@ -98,6 +99,7 @@ const MODEL_PARAMETER_EXAMPLES: Record<string, Record<string, unknown>> = {
 type ForecastStageKey = typeof FORECAST_STAGES[number]['key']
 
 export function ForecastingPage() {
+  const chart = useChartTheme()
   const { user } = useAuthStore()
   const canGenerate = can(user?.role, 'forecast.generate')
   const canApproveConsensus = can(user?.role, 'forecast.consensus.approve')
@@ -922,8 +924,8 @@ export function ForecastingPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">AI Forecasting</h1>
-          <p className="text-sm text-gray-500 mt-0.5">ML-powered demand forecasting</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">AI Forecasting</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">ML-powered demand forecasting</p>
         </div>
       </div>
 
@@ -939,11 +941,11 @@ export function ForecastingPage() {
       <Card title="Step 1 · Select Product & Review Historical Demand" subtitle="View actual demand before generating forecast">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
           <div className="md:col-span-2">
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Product</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Product</label>
             <select
               value={selectedProductId ?? ''}
               onChange={(e) => setSelectedProductId(e.target.value ? Number(e.target.value) : undefined)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select a product</option>
               {products.map((p) => (
@@ -952,11 +954,11 @@ export function ForecastingPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">History Range</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">History Range</label>
             <select
               value={historyRangeMonths}
               onChange={(e) => setHistoryRangeMonths(Number(e.target.value))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value={6}>Last 6 months</option>
               <option value={12}>Last 12 months</option>
@@ -966,20 +968,20 @@ export function ForecastingPage() {
         </div>
 
         {!selectedProductId ? (
-          <p className="text-sm text-gray-500">Select a product to preview historical demand values.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Select a product to preview historical demand values.</p>
         ) : historyLoading ? (
           <SkeletonTable rows={5} cols={4} />
         ) : historyChartData.length === 0 ? (
-          <p className="text-sm text-gray-500">No historical demand data found for this product and range.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No historical demand data found for this product and range.</p>
         ) : (
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={historyChartData} margin={{ top: 16, right: 24, left: 8, bottom: 12 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="period" tickMargin={8} />
-                <YAxis width={56} />
+                <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                <XAxis dataKey="period" tickMargin={8} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
+                <YAxis width={56} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
                 <Tooltip formatter={(v) => (typeof v === 'number' ? formatNumber(v) : '—')} />
-                <Legend />
+                <Legend wrapperStyle={chart.legend} />
                 <Line type="monotone" dataKey="actual_qty" name="Actual Qty" stroke="#16a34a" strokeWidth={2} dot={false} connectNulls={false} />
               </LineChart>
             </ResponsiveContainer>
@@ -992,7 +994,7 @@ export function ForecastingPage() {
       <Card title="Step 2 · Backtesting" subtitle="Compare model performance before selecting a forecasting model">
         <div className="mb-3 grid grid-cols-1 md:grid-cols-3 gap-2">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Product</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Product</label>
             <input
               type="text"
               readOnly
@@ -1002,15 +1004,15 @@ export function ForecastingPage() {
                   ? `#${selectedProductId}`
                   : ''}
               placeholder="Select product in Step 1"
-              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
+              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Backtest Window</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Backtest Window</label>
             <select
               value={comparisonParams.test_months}
               onChange={(e) => setComparisonParams((prev) => ({ ...prev, test_months: Number(e.target.value) }))}
-              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg"
+              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-lg"
             >
               <option value={3}>3 months</option>
               <option value={6}>6 months</option>
@@ -1019,11 +1021,11 @@ export function ForecastingPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Minimum Train Months</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Minimum Train Months</label>
             <select
               value={comparisonParams.min_train_months}
               onChange={(e) => setComparisonParams((prev) => ({ ...prev, min_train_months: Number(e.target.value) }))}
-              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg"
+              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-lg"
             >
               <option value={3}>3 months</option>
               <option value={6}>6 months</option>
@@ -1044,7 +1046,7 @@ export function ForecastingPage() {
         </div>
 
         <div className="mb-3">
-          <label className="block text-xs font-medium text-gray-700 mb-1">Parameter Grid (optional JSON)</label>
+          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Parameter Grid (optional JSON)</label>
           <textarea
             rows={12}
             value={backtestParameterGridText}
@@ -1059,10 +1061,10 @@ export function ForecastingPage() {
                 // keep user input as-is until they fix JSON
               }
             }}
-            className="w-full min-h-[280px] px-2.5 py-2 text-xs border border-gray-300 rounded-lg font-mono"
+            className="w-full min-h-[280px] px-2.5 py-2 text-xs border border-gray-300 dark:border-gray-600 rounded-lg font-mono"
             placeholder={PARAMETER_GRID_EXAMPLE}
           />
-          <p className="mt-1 text-[11px] text-gray-500">Format: model_id → array of parameter objects. Example includes all supported models; best parameter set is selected per model.</p>
+          <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400">Format: model_id → array of parameter objects. Example includes all supported models; best parameter set is selected per model.</p>
         </div>
 
         {modelComparisonFlags.length > 0 && (
@@ -1082,21 +1084,21 @@ export function ForecastingPage() {
             {comparisonError}
           </div>
         ) : modelComparison.length === 0 ? (
-          <div className="text-center py-10 text-gray-400">
+          <div className="text-center py-10 text-gray-400 dark:text-gray-500">
             <p className="text-sm">No backtesting data available yet</p>
           </div>
         ) : (
           <div className="space-y-3">
             {selectedBacktestModelRow && backtestChartData.length > 0 && (
-              <div className="rounded-lg border border-gray-100 p-3">
+              <div className="rounded-lg border border-gray-100 dark:border-gray-700 p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <p className="text-xs text-gray-600">
-                    Backtest actual vs forecasted quantities · Model: <span className="font-semibold text-gray-900">{selectedBacktestModelRow.model_type.replace(/_/g, ' ')}</span>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Backtest actual vs forecasted quantities · Model: <span className="font-semibold text-gray-900 dark:text-gray-100">{selectedBacktestModelRow.model_type.replace(/_/g, ' ')}</span>
                   </p>
                   <select
                     value={selectedBacktestModelRow.model_type}
                     onChange={(e) => setSelectedBacktestModel(e.target.value)}
-                    className="px-2 py-1 text-xs border border-gray-300 rounded-lg"
+                    className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-lg"
                   >
                     {modelComparison.map((m) => (
                       <option key={m.model_type} value={m.model_type}>
@@ -1140,19 +1142,19 @@ export function ForecastingPage() {
                   </div>
                 </div>
                 {selectedBacktestModelRow.best_params && Object.keys(selectedBacktestModelRow.best_params).length > 0 && (
-                  <div className="mb-3 rounded bg-gray-50 px-2 py-2">
-                    <p className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">Best Params</p>
-                    <pre className="text-[11px] text-gray-700 whitespace-pre-wrap">{JSON.stringify(selectedBacktestModelRow.best_params, null, 2)}</pre>
+                  <div className="mb-3 rounded bg-gray-50 dark:bg-gray-800 px-2 py-2">
+                    <p className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Best Params</p>
+                    <pre className="text-[11px] text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{JSON.stringify(selectedBacktestModelRow.best_params, null, 2)}</pre>
                   </div>
                 )}
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={backtestChartData} margin={{ top: 12, right: 16, left: 0, bottom: 8 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="period" tickMargin={8} />
-                      <YAxis width={56} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                      <XAxis dataKey="period" tickMargin={8} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
+                      <YAxis width={56} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
                       <Tooltip formatter={(v) => (typeof v === 'number' ? formatNumber(v) : '—')} />
-                      <Legend />
+                      <Legend wrapperStyle={chart.legend} />
                       <Line type="monotone" dataKey="actual_qty" name="Actual Qty" stroke="#16a34a" strokeWidth={2} dot={false} connectNulls={false} />
                       <Line type="monotone" dataKey="predicted_qty" name="Forecast Qty" stroke="#2563eb" strokeWidth={2} dot={false} connectNulls={false} />
                     </LineChart>
@@ -1161,10 +1163,10 @@ export function ForecastingPage() {
               </div>
             )}
 
-            <div className="overflow-x-auto rounded-lg border border-gray-100">
+            <div className="overflow-x-auto rounded-lg border border-gray-100 dark:border-gray-700">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
+                  <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <th className="text-left px-2 py-2">Model</th>
                     <th className="text-left px-2 py-2">Score</th>
                     <th className="text-left px-2 py-2">MAPE</th>
@@ -1187,7 +1189,7 @@ export function ForecastingPage() {
                       <td className="px-2 py-2">{formatNumber(m.mdae)}</td>
                       <td className="px-2 py-2">{m.r2.toFixed(4)}</td>
                       <td className="px-2 py-2">
-                        <pre className="text-[11px] whitespace-pre-wrap break-words text-gray-700 font-mono">
+                        <pre className="text-[11px] whitespace-pre-wrap break-words text-gray-700 dark:text-gray-300 font-mono">
                           {formatParameterGridForDisplay(m.model_type, (m.best_params ?? m.model_params ?? {}) as Record<string, unknown>)}
                         </pre>
                       </td>
@@ -1218,31 +1220,31 @@ export function ForecastingPage() {
       <Card title="Step 3 · Model Setup" subtitle="Configure model inputs for forecast generation">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Model Type</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Model Type</label>
             <select value={form.model_type ?? 'prophet'}
               onChange={(e) => setForm((f) => ({ ...f, model_type: e.target.value as GenerateForecastRequest['model_type'] }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               {MODEL_TYPES.map((m) => (
                 <option key={m.value} value={m.value}>{m.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Forecast Horizon (months)</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Forecast Horizon (months)</label>
             <input type="number" min={1} max={24} value={form.horizon_months ?? 6}
               onChange={(e) => setForm((f) => ({ ...f, horizon_months: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Model Parameters (optional JSON)</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Model Parameters (optional JSON)</label>
             <textarea
               rows={8}
               value={generationModelParamsText}
               onChange={(e) => setGenerationModelParamsText(e.target.value)}
-              className="w-full min-h-[180px] px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+              className="w-full min-h-[180px] px-3 py-2 text-xs border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
               placeholder={selectedModelExampleText}
             />
-            <p className="mt-1 text-[11px] text-gray-500">Format (same as Backtesting Parameter Grid): model_id → array of parameter objects. The selected model entry is applied for generation.</p>
+            <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400">Format (same as Backtesting Parameter Grid): model_id → array of parameter objects. The selected model entry is applied for generation.</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -1293,7 +1295,7 @@ export function ForecastingPage() {
       <Card title="Consensus Quantity Snapshot" subtitle="Latest cross-functional agreed demand value">
         {!latestConsensus ? (
           <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-gray-500">No consensus records available for selected product.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">No consensus records available for selected product.</p>
             <Button size="sm" variant="outline" icon={<Edit3 className="h-4 w-4" />} onClick={() => openConsensusModal('fresh')}>
               Create
             </Button>
@@ -1302,20 +1304,20 @@ export function ForecastingPage() {
           <div className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
               <div>
-                <p className="text-xs text-gray-500">Period</p>
-                <p className="text-sm font-medium text-gray-900">{formatPeriod(latestConsensus.period)}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Period</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{formatPeriod(latestConsensus.period)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Final Consensus</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Final Consensus</p>
                 <p className="text-sm font-semibold text-emerald-700">{formatNumber(latestConsensus.final_consensus_qty)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Pre-Consensus</p>
-                <p className="text-sm text-gray-900">{formatNumber(latestConsensus.pre_consensus_qty)}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Pre-Consensus</p>
+                <p className="text-sm text-gray-900 dark:text-gray-100">{formatNumber(latestConsensus.pre_consensus_qty)}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500">Status</p>
-                <p className="text-sm text-gray-900 capitalize">{latestConsensus.status}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
+                <p className="text-sm text-gray-900 dark:text-gray-100 capitalize">{latestConsensus.status}</p>
               </div>
             </div>
             <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
@@ -1367,7 +1369,7 @@ export function ForecastingPage() {
               </p>
             )}
             {(latestConsensus.status === 'approved' || latestConsensus.status === 'frozen') && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 This consensus is already {latestConsensus.status}.
               </p>
             )}
@@ -1379,28 +1381,28 @@ export function ForecastingPage() {
       {activeStage === 'stage4' && (
       <Card title="Consensus History" subtitle="Latest consensus versions for selected product">
         {selectedConsensus.length === 0 ? (
-          <p className="text-sm text-gray-500">No consensus history yet for selected product.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">No consensus history yet for selected product.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-gray-100 dark:border-gray-700">
                   {['Period', 'Version', 'Pre-Consensus', 'Final Consensus', 'Status', 'Approved At'].map((h) => (
-                    <th key={h} className="text-left pb-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left pb-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {[...selectedConsensus].reverse().slice(0, 10).map((c) => (
-                  <tr key={c.id} className="hover:bg-gray-50">
-                    <td className="py-2.5 text-gray-900">{formatPeriod(c.period)}</td>
-                    <td className="py-2.5 text-gray-700">v{c.version}</td>
-                    <td className="py-2.5 text-gray-700">{formatNumber(c.pre_consensus_qty)}</td>
-                    <td className="py-2.5 font-medium text-gray-900">{formatNumber(c.final_consensus_qty)}</td>
+                  <tr key={c.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="py-2.5 text-gray-900 dark:text-gray-100">{formatPeriod(c.period)}</td>
+                    <td className="py-2.5 text-gray-700 dark:text-gray-300">v{c.version}</td>
+                    <td className="py-2.5 text-gray-700 dark:text-gray-300">{formatNumber(c.pre_consensus_qty)}</td>
+                    <td className="py-2.5 font-medium text-gray-900 dark:text-gray-100">{formatNumber(c.final_consensus_qty)}</td>
                     <td className="py-2.5">
                       <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full capitalize">{c.status}</span>
                     </td>
-                    <td className="py-2.5 text-gray-600">{c.approved_at ? new Date(c.approved_at).toLocaleString() : '—'}</td>
+                    <td className="py-2.5 text-gray-600 dark:text-gray-400">{c.approved_at ? new Date(c.approved_at).toLocaleString() : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1420,7 +1422,7 @@ export function ForecastingPage() {
             {!bestModelByScore && bestModelByScoreOverall ? ' (using overall data fallback)' : ''}
           </div>
         ) : (
-          <p className="text-sm text-gray-500">Accuracy appears after actual demand is recorded for forecasted months.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Accuracy appears after actual demand is recorded for forecasted months.</p>
         )}
       </Card>
       )}
@@ -1428,9 +1430,9 @@ export function ForecastingPage() {
       {activeStage === 'stage4' && selectedForecastModelType && (
       <Card title="Viewing Filter" subtitle="Filtered from Manage Forecast Results">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
             Showing forecast curve for model:{' '}
-            <span className="font-semibold text-gray-900">{selectedForecastModelType.replace(/_/g, ' ')}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">{selectedForecastModelType.replace(/_/g, ' ')}</span>
           </p>
           <Button variant="outline" onClick={() => setSelectedForecastModelType(undefined)}>
             Show all models
@@ -1445,9 +1447,9 @@ export function ForecastingPage() {
           title="Forecast Curve"
           subtitle={`Historical + prediction + consensus with confidence interval${chartProductId ? ` · Product: ${chartProduct ? `${chartProduct.name} (${chartProduct.sku})` : `#${chartProductId}`}` : ''}${forecastModelUsed ? ` · Model: ${forecastModelUsed}` : ''}`}
         >
-          <div className="mb-3 text-sm text-gray-700">
+          <div className="mb-3 text-sm text-gray-700 dark:text-gray-300">
             <span className="font-medium">Model used:</span>{' '}
-            <span className="text-gray-900">
+            <span className="text-gray-900 dark:text-gray-100">
               {(selectedForecastModelType ?? (forecastModelUsed ? forecastModelUsed.replace(/ /g, '_') : undefined))
                 ? (selectedForecastModelType ?? forecastModelUsed)?.replace(/_/g, ' ')
                 : '—'}
@@ -1460,16 +1462,16 @@ export function ForecastingPage() {
             </div>
           )}
           {chartData.length === 0 ? (
-            <div className="text-center py-10 text-gray-400 text-sm">Select a product and generate forecast to visualize trend</div>
+            <div className="text-center py-10 text-gray-400 dark:text-gray-500 text-sm">Select a product and generate forecast to visualize trend</div>
           ) : (
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 16, right: 16, left: 0, bottom: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="period" tickMargin={8} />
-                  <YAxis width={56} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                  <XAxis dataKey="period" tickMargin={8} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
+                  <YAxis width={56} tick={{ fill: chart.axis, fontSize: 12 }} stroke={chart.axis} />
                   <Tooltip formatter={(v) => (typeof v === 'number' ? formatNumber(v) : '—')} />
-                  <Legend />
+                  <Legend wrapperStyle={chart.legend} />
                   <Line type="monotone" dataKey="upper_bound" stroke="#93c5fd" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Confidence Upper" connectNulls={false} />
                   <Line type="monotone" dataKey="lower_bound" stroke="#93c5fd" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Confidence Lower" connectNulls={false} />
                   <Line type="monotone" dataKey="historical_qty" stroke="#16a34a" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 4 }} name="Historical" connectNulls={false} />
@@ -1486,26 +1488,26 @@ export function ForecastingPage() {
       {activeStage === 'stage4' && (
       <Card title="Forecast Point Details" subtitle="Historical and predicted points for selected/generated product">
         {forecastPointRows.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-gray-400 dark:text-gray-500">
             <p className="text-sm">No forecast points available for this product yet</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-gray-100 dark:border-gray-700">
                   {['Period', 'Predicted', 'Lower', 'Upper'].map((h) => (
-                    <th key={h} className="text-left pb-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left pb-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {forecastPointRows.map((p) => (
-                  <tr key={`point-${p.id}`} className="hover:bg-gray-50">
-                    <td className="py-2.5 text-gray-900">{formatPeriod(p.period)}</td>
-                    <td className="py-2.5 text-gray-700">{formatNumber(Number(p.predicted_qty ?? 0))}</td>
-                    <td className="py-2.5 text-gray-600">{p.lower_bound != null ? formatNumber(Number(p.lower_bound)) : '—'}</td>
-                    <td className="py-2.5 text-gray-600">{p.upper_bound != null ? formatNumber(Number(p.upper_bound)) : '—'}</td>
+                  <tr key={`point-${p.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="py-2.5 text-gray-900 dark:text-gray-100">{formatPeriod(p.period)}</td>
+                    <td className="py-2.5 text-gray-700 dark:text-gray-300">{formatNumber(Number(p.predicted_qty ?? 0))}</td>
+                    <td className="py-2.5 text-gray-600 dark:text-gray-400">{p.lower_bound != null ? formatNumber(Number(p.lower_bound)) : '—'}</td>
+                    <td className="py-2.5 text-gray-600 dark:text-gray-400">{p.upper_bound != null ? formatNumber(Number(p.upper_bound)) : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1520,7 +1522,7 @@ export function ForecastingPage() {
         {loading ? (
           <SkeletonTable rows={6} cols={4} />
         ) : forecasts.length === 0 ? (
-          <div className="text-center py-10 text-gray-400">
+          <div className="text-center py-10 text-gray-400 dark:text-gray-500">
             <Brain className="h-8 w-8 mx-auto mb-2 opacity-40" />
             <p className="text-sm">No forecasts yet. Generate your first forecast.</p>
           </div>
@@ -1528,22 +1530,22 @@ export function ForecastingPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-gray-100 dark:border-gray-700">
                   {['Product', 'Model', 'Periods', 'Count', 'Actions'].map((h) => (
-                    <th key={h} className="text-left pb-3 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left pb-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {groupedForecastModels.slice(0, 50).map((g) => (
-                  <tr key={`${g.product_id}-${g.model_type}`} className="hover:bg-gray-50">
-                    <td className="py-2.5 font-medium text-gray-900 pr-3">{g.product_name}</td>
+                  <tr key={`${g.product_id}-${g.model_type}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="py-2.5 font-medium text-gray-900 dark:text-gray-100 pr-3">{g.product_name}</td>
                     <td className="py-2.5 pr-3">
                       <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
                         {g.model_type?.replace(/_/g, ' ') ?? '—'}
                       </span>
                     </td>
-                    <td className="py-2.5 text-gray-600 pr-3">
+                    <td className="py-2.5 text-gray-600 dark:text-gray-400 pr-3">
                       {g.period_from && g.period_to
                         ? `${formatPeriod(g.period_from)} → ${formatPeriod(g.period_to)}`
                         : '—'}
@@ -1553,14 +1555,14 @@ export function ForecastingPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleViewForecastResult(g.product_id, g.model_type)}
-                          className="p-1.5 rounded text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                          className="p-1.5 rounded text-gray-500 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                           title="View this forecast in Forecast View"
                         >
                           <Eye className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => handlePromoteForecastResult(g.product_id, g.model_type)}
-                          className="p-1.5 rounded text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                          className="p-1.5 rounded text-gray-500 dark:text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
                           title="Promote this forecast model to Demand Plan"
                           disabled={!canGenerate}
                         >
@@ -1568,7 +1570,7 @@ export function ForecastingPage() {
                         </button>
                         <button
                           onClick={() => handleDeleteForecastGroup(g.product_id, g.product_name)}
-                          className="p-1.5 rounded text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          className="p-1.5 rounded text-gray-500 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                           title="Delete all forecast results for this product"
                           disabled={!canGenerate}
                         >
@@ -1587,7 +1589,7 @@ export function ForecastingPage() {
 
       {(activeStage !== 'stage1' && !selectedProductId) && (
         <Card title="Stage Locked" subtitle="Select a product in Stage 1 first">
-          <p className="text-sm text-gray-500">Please go to Stage 1 and select a product to continue.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Please go to Stage 1 and select a product to continue.</p>
         </Card>
       )}
 
@@ -1604,30 +1606,30 @@ export function ForecastingPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Product ID *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Product ID *</label>
             <input type="number" value={form.product_id ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, product_id: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter product ID" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Model Type</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Model Type</label>
             <select value={form.model_type ?? 'prophet'}
               onChange={(e) => setForm((f) => ({ ...f, model_type: e.target.value as GenerateForecastRequest['model_type'] }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               {MODEL_TYPES.map((m) => (
                 <option key={m.value} value={m.value}>{m.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Forecast Horizon (months): {form.horizon_months}
             </label>
             <input type="range" min={1} max={24} value={form.horizon_months ?? 6}
               onChange={(e) => setForm((f) => ({ ...f, horizon_months: Number(e.target.value) }))}
               className="w-full" />
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-1">
               <span>1 month</span><span>24 months</span>
             </div>
           </div>
@@ -1647,77 +1649,77 @@ export function ForecastingPage() {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Period *</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Period *</label>
             <input
               type="date"
               value={consensusForm.period}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, period: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Status</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
             <select
               value={consensusForm.status}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, status: e.target.value as ForecastConsensus['status'] }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             >
               <option value="draft">draft</option>
               <option value="proposed">proposed</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Baseline Qty</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Baseline Qty</label>
             <input
               type="number"
               value={consensusForm.baseline_qty}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, baseline_qty: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Sales Override</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Sales Override</label>
             <input
               type="number"
               value={consensusForm.sales_override_qty}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, sales_override_qty: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Marketing Uplift</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Marketing Uplift</label>
             <input
               type="number"
               value={consensusForm.marketing_uplift_qty}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, marketing_uplift_qty: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Finance Adjustment</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Finance Adjustment</label>
             <input
               type="number"
               value={consensusForm.finance_adjustment_qty}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, finance_adjustment_qty: Number(e.target.value) }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Constraint Cap (optional)</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Constraint Cap (optional)</label>
             <input
               type="number"
               value={consensusForm.constraint_cap_qty}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, constraint_cap_qty: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Notes</label>
             <textarea
               rows={3}
               value={consensusForm.notes}
               onChange={(e) => setConsensusForm((prev) => ({ ...prev, notes: e.target.value }))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
           <div className="md:col-span-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2">
