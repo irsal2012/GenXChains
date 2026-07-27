@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import { authService } from '@/services/authService'
 import type { User } from '@/types'
 import toast from 'react-hot-toast'
+import { ACCESS_TOKEN_KEY, AUTH_STORAGE_KEY, clearSession } from '@/store/authStorage'
 
 interface AuthState {
   user: User | null
@@ -28,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true })
         try {
           const res = await authService.login({ username: email, password })
-          localStorage.setItem('access_token', res.access_token)
+          localStorage.setItem(ACCESS_TOKEN_KEY, res.access_token)
           set({
             token: res.access_token,
             user: res.user,
@@ -43,13 +44,13 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        localStorage.removeItem('access_token')
+        clearSession()
         set({ user: null, token: null, isAuthenticated: false })
         toast.success('Logged out successfully')
       },
 
       fetchMe: async () => {
-        const token = localStorage.getItem('access_token')
+        const token = localStorage.getItem(ACCESS_TOKEN_KEY)
         if (!token) return
         try {
           const user = await authService.getMe()
@@ -62,7 +63,7 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
     }),
     {
-      name: 'genxchains-auth',
+      name: AUTH_STORAGE_KEY,
       partialize: (state) => ({ token: state.token, user: state.user, isAuthenticated: state.isAuthenticated }),
     },
   ),

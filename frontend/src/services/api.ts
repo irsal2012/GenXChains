@@ -1,5 +1,6 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import toast from 'react-hot-toast'
+import { clearSession } from '@/store/authStorage'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Axios Instance
@@ -32,8 +33,15 @@ api.interceptors.response.use(
     const detail = error.response?.data?.detail
 
     if (status === 401) {
-      localStorage.removeItem('access_token')
-      window.location.href = '/login'
+      // Clear the persisted store as well as the raw token. Leaving
+      // `isAuthenticated: true` behind sends the router straight back into the
+      // app, which fires another unauthenticated request and loops.
+      clearSession()
+      // Guard the redirect too: assigning href while already on /login
+      // reloads the page endlessly if anything there ever 401s.
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
       return Promise.reject(error)
     }
 

@@ -76,6 +76,40 @@ curl -s "http://localhost:8000/api/v1/auth/me" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+### 5) Update your own profile
+
+`role` and `is_active` are ignored here — they are admin-controlled, so a user
+cannot escalate their own privileges.
+
+```bash
+curl -s -X PUT "http://localhost:8000/api/v1/auth/me" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"full_name": "New Name", "department": "Planning"}'
+```
+
+### 6) List users (admin only)
+
+```bash
+curl -s "http://localhost:8000/api/v1/auth/users" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+## Status codes
+
+| Code | Meaning |
+|---|---|
+| 400 | Business-rule violation or invalid state transition |
+| 401 | Missing, malformed or expired credentials — re-authenticate |
+| 403 | Authenticated, but the role lacks permission |
+| 404 | Entity not found |
+| 409 | Duplicate entity, or a database constraint violation |
+| 422 | Request body failed schema validation |
+
+The 401/403 split matters to clients: the SPA clears its session and redirects
+to `/login` on 401 only, and treats 403 as a permissions message. Sending a
+request with no `Authorization` header returns 401, not 403.
+
 ## Common endpoints by module
 
 > Note: Some endpoints require specific roles (admin/executive/planner/etc.).
@@ -86,6 +120,8 @@ curl -s "http://localhost:8000/api/v1/auth/me" \
 curl -s "http://localhost:8000/api/v1/dashboard/summary" -H "Authorization: Bearer $TOKEN"
 curl -s "http://localhost:8000/api/v1/dashboard/alerts"  -H "Authorization: Bearer $TOKEN"
 curl -s "http://localhost:8000/api/v1/dashboard/sop-status" -H "Authorization: Bearer $TOKEN"
+# Latest reading per KPI, grouped by category
+curl -s "http://localhost:8000/api/v1/dashboard/kpi-overview" -H "Authorization: Bearer $TOKEN"
 ```
 
 ### Products
@@ -170,6 +206,21 @@ Gap analysis:
 ```bash
 curl -s "http://localhost:8000/api/v1/supply/gap-analysis?period=2026-03-01" \
   -H "Authorization: Bearer $TOKEN"
+```
+
+Approve or reject a plan (approver roles). Rejection returns the plan to
+`draft` for revision — `ck_supply_plans_status` permits only
+`draft`/`submitted`/`approved`, so the reason is captured in the audit trail
+rather than in a `rejected` status:
+
+```bash
+curl -s -X POST "http://localhost:8000/api/v1/supply/plans/1/approve" \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -s -X POST "http://localhost:8000/api/v1/supply/plans/1/reject" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"reason": "Capacity constraints"}'
 ```
 
 ### Inventory
@@ -357,8 +408,11 @@ Compare:
 curl -s -X POST "http://localhost:8000/api/v1/scenarios/compare" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '[1,2,3]'
+  -d '{"scenario_ids": [1,2,3]}'
 ```
+
+`scenario_type` accepts `what_if`, `baseline`, `stress_test`, `best_case` and
+`worst_case`. Anything else is rejected with 422.
 
 ### S&OP cycles
 
@@ -445,6 +499,38 @@ List metrics:
 ```bash
 curl -s "http://localhost:8000/api/v1/kpi/metrics?category=demand" \
   -H "Authorization: Bearer $TOKEN"
+```
+
+Portfolio roll-up (on-target counts, alert counts, totals by category):
+
+```bash
+curl -s "http://localhost:8000/api/v1/kpi/summary" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Time series per metric, oldest period first, for trend charts:
+
+```bash
+curl -s "http://localhost:8000/api/v1/kpi/trends?category=service&months=12" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+History for one metric. Note the separate route: `/kpi/metrics/{metric_id}`
+takes a numeric id and returns a single record, so a metric *name* must go to
+`by-name` instead:
+
+```bash
+curl -s "http://localhost:8000/api/v1/kpi/metrics/by-name/OTIF" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Update a metric (admin/executive). Variance and trend are recalculated:
+
+```bash
+curl -s -X PUT "http://localhost:8000/api/v1/kpi/metrics/1" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"value": 93.5}'
 ```
 
 ## Notes for frontend developers

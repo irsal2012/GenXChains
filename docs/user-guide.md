@@ -272,7 +272,7 @@ API:
 
 ### Compare
 
-- `POST /api/v1/scenarios/compare` (with a list of IDs)
+- `POST /api/v1/scenarios/compare` (body: `{"scenario_ids": [1, 2, 3]}`)
 
 ## 9) S&OP Cycle
 
