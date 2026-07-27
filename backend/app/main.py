@@ -13,6 +13,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 
 from app.config import settings
 from app.database import create_tables, SessionLocal, engine
@@ -120,6 +121,27 @@ async def value_error_handler(request: Request, exc: ValueError) -> JSONResponse
     return JSONResponse(
         status_code=400,
         content={"success": False, "error": {"code": "VALIDATION_ERROR", "message": str(exc)}},
+    )
+
+
+@app.exception_handler(IntegrityError)
+async def integrity_error_handler(request: Request, exc: IntegrityError) -> JSONResponse:
+    """
+    Database constraint violations (unique / check / foreign key) are caller
+    errors, not server faults. Without this handler SQLAlchemy's IntegrityError
+    escapes as a 500 with a raw SQL traceback, which both misleads clients and
+    leaks schema internals.
+    """
+    logger.warning("integrity_error path=%s detail=%s", request.url.path, exc.orig)
+    return JSONResponse(
+        status_code=409,
+        content={
+            "success": False,
+            "error": {
+                "code": "CONSTRAINT_VIOLATION",
+                "message": "Request violates a database constraint.",
+            },
+        },
     )
 
 

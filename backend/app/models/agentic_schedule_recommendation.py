@@ -39,6 +39,10 @@ class AgenticScheduleRecommendation(Base):
         Index("ix_agentic_sched_rec_status_created", "status", "created_at"),
         Index("ix_agentic_sched_rec_supply_plan_status", "supply_plan_id", "status"),
         Index("ix_agentic_sched_rec_product_period", "product_id", "period"),
+        # Backs max_revision_for_chain()'s ordered lookup over a revision chain.
+        # Declared here so autogenerate stops proposing to drop it — the index
+        # was created by revision 20260316_0012 but never mirrored in the model.
+        Index("ix_agentic_sched_rec_revision", "recommendation_id", "revision_number"),
     )
 
     id = Column(Integer, primary_key=True, index=True)

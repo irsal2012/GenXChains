@@ -285,39 +285,37 @@ class ScenarioService:
             "inventory_impact": Decimal(str(results["inventory_impact"])),
             "service_level_impact": Decimal(str(results["service_level_impact"])),
         }
+        old_status = scenario.status
         result = self._repo.update(scenario, updates)
         self._bus.publish(PlanStatusChangedEvent(
             entity_type="scenario", entity_id=scenario_id, user_id=user_id,
-            old_status=scenario.status, new_status="completed",
+            old_status=old_status, new_status="completed",
+        ))
+        return result
+
+    def _transition(self, scenario_id: int, new_status: str, user_id: int, **extra_updates) -> Scenario:
+        """Apply a status transition and emit an accurate audit event.
+
+        `old_status` is read before the update because the repository mutates
+        the same ORM instance in place.
+        """
+        scenario = self.get_scenario(scenario_id)
+        old_status = scenario.status
+        result = self._repo.update(scenario, {"status": new_status, **extra_updates})
+        self._bus.publish(PlanStatusChangedEvent(
+            entity_type="scenario", entity_id=scenario_id, user_id=user_id,
+            old_status=old_status, new_status=new_status,
         ))
         return result
 
     def submit_scenario(self, scenario_id: int, user_id: int) -> Scenario:
-        scenario = self.get_scenario(scenario_id)
-        result = self._repo.update(scenario, {"status": "submitted"})
-        self._bus.publish(PlanStatusChangedEvent(
-            entity_type="scenario", entity_id=scenario_id, user_id=user_id,
-            old_status=scenario.status, new_status="submitted",
-        ))
-        return result
+        return self._transition(scenario_id, "submitted", user_id)
 
     def approve_scenario(self, scenario_id: int, approver_id: int) -> Scenario:
-        scenario = self.get_scenario(scenario_id)
-        result = self._repo.update(scenario, {"status": "approved", "approved_by": approver_id})
-        self._bus.publish(PlanStatusChangedEvent(
-            entity_type="scenario", entity_id=scenario_id, user_id=approver_id,
-            old_status=scenario.status, new_status="approved",
-        ))
-        return result
+        return self._transition(scenario_id, "approved", approver_id, approved_by=approver_id)
 
     def reject_scenario(self, scenario_id: int, approver_id: int) -> Scenario:
-        scenario = self.get_scenario(scenario_id)
-        result = self._repo.update(scenario, {"status": "rejected"})
-        self._bus.publish(PlanStatusChangedEvent(
-            entity_type="scenario", entity_id=scenario_id, user_id=approver_id,
-            old_status=scenario.status, new_status="rejected",
-        ))
-        return result
+        return self._transition(scenario_id, "rejected", approver_id)
 
     def compare_scenarios(self, ids: List[int]) -> List[dict]:
         scenarios = self._repo.get_by_ids(ids)

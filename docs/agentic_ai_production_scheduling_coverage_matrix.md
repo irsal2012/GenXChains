@@ -32,8 +32,8 @@ Legend:
 | Requirement | Status | Evidence | Notes |
 |---|---|---|---|
 | Finite capacity scheduling | 🟡 | `production_schedule_service.py` generation/capacity summary | Basic slot/capacity logic exists; advanced solver depth limited |
-| Alternate routings | ❌ | N/A | Not explicitly implemented |
-| Machine eligibility rules | 🟡 | Workcenter/line scoping and filtering | No formal eligibility rule engine/catalog |
+| Alternate routings | ✅ | Policy-driven alternate routing map in `backend/app/services/agentic_scheduling_config_service.py` and enforcement in `backend/app/services/agentic_scheduling_service.py::_apply_constraint_catalog` | Covered by `test_alternate_routing_used_when_scoped_row_ineligible` |
+| Machine eligibility rules | ✅ | Policy-driven eligibility config (`machine_eligibility`) and filtering in `_apply_constraint_catalog` | Covered by `test_machine_eligibility_filters_impacted_rows` + failure guardrail test |
 | Labor constraints | 🟡 | Shift-level scheduling fields | Skill/availability optimization limited |
 | Material availability integration | 🟡 | Event signals (`MATERIAL_SHORTAGE`) and recommendations | Not full MRP-grade constrained optimizer |
 | Sequence-dependent setup optimization | 🟡 | Resequence and orchestration scoring includes changeover penalty | No full setup-matrix optimizer yet |
@@ -106,12 +106,12 @@ Legend:
 Current implementation is **substantial but not complete** relative to the full requirement document.
 
 - **Strongly implemented**: event ingestion reliability, event-driven recommendation lifecycle, approval/publish guardrails, schedule versioning/compare, and P2 orchestration simulation enrichments.
-- **Partially implemented**: deeper constraint solver capabilities, formalized multi-agent runtime decomposition, and enterprise-grade observability/compliance envelope.
-- **Missing**: some roadmap-level capabilities (e.g., complete alternate-routing/eligibility rule engine and richer simulation UX/workbench depth).
+- **Partially implemented**: deeper constraint solver capabilities (beyond current policy catalog), formalized multi-agent runtime decomposition, and enterprise-grade observability/compliance envelope.
+- **Missing**: some roadmap-level capabilities (e.g., richer simulation UX/workbench depth and advanced optimization depth).
 
 ## 8) Recommended Next Slice (P2 -> P3 Bridge)
 
-1. Introduce a **constraint catalog** abstraction (machine eligibility, labor skill, setup matrix) with explicit validation chain.
+1. Extend the constraint catalog beyond current machine-eligibility/alternate-routing coverage (labor skill, setup matrix) with explicit validation chain.
 2. Expand simulation features with scenario cataloging, richer compare semantics, and UI drill-down over persisted runs.
 3. Expand audit breadth from recommendation-centric traces to broader cross-domain audit views and UI drill-downs.
 4. Expand UI to display **objective weights, risk indicators, and simulation alternatives** explicitly in control tower/recommendation panels.

@@ -1,7 +1,7 @@
 """
 Forecast Consensus Service — Service Layer (SRP / DIP)
 """
-from datetime import date, datetime
+from datetime import date
 from decimal import Decimal
 from typing import Optional, List
 
@@ -23,6 +23,7 @@ from app.schemas.forecast_consensus import (
     ForecastConsensusUpdate,
     ForecastConsensusApproveRequest,
 )
+from app.utils.time import utc_now
 
 
 class ForecastConsensusService:
@@ -200,7 +201,7 @@ class ForecastConsensusService:
             {
                 "status": "approved",
                 "approved_by": approver_id,
-                "approved_at": datetime.utcnow(),
+                "approved_at": utc_now(),
                 "notes": notes,
             },
         )

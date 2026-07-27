@@ -56,8 +56,10 @@ export const kpiService = {
     return normalizePaginated(data)
   },
 
+  // History for one metric. `/kpi/metrics/{id}` takes a numeric id and returns a
+  // single record, so a name must go to the by-name route instead.
   async getMetric(name: string): Promise<KPIMetric[]> {
-    const res = await api.get<KPIMetric[]>(`/kpi/metrics/${name}`)
+    const res = await api.get<KPIMetric[]>(`/kpi/metrics/by-name/${encodeURIComponent(name)}`)
     return Array.isArray(res.data) ? (res.data as any[]).map(normalizeMetric) : []
   },
 

@@ -1,20 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from datetime import datetime
+from typing import List
+from datetime import datetime, timezone
 from app.database import get_db
+from app.core.exceptions import DuplicateEntityException, to_http_exception
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse, LoginRequest, TokenResponse, ChangePasswordRequest, RefreshTokenRequest
+from app.schemas.user import (
+    UserCreate, UserUpdate, UserResponse, LoginRequest, TokenResponse,
+    ChangePasswordRequest, RefreshTokenRequest,
+)
 from app.utils.security import get_password_hash, verify_password, create_access_token, create_refresh_token, decode_token
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, require_roles
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+ADMIN_ROLES = ["admin"]
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.email == user_data.email).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise to_http_exception(DuplicateEntityException("User", "email", user_data.email))
     user = User(
         email=user_data.email,
         hashed_password=get_password_hash(user_data.password),
@@ -33,7 +40,8 @@ def login(credentials: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == credentials.email, User.is_active == True).first()
     if not user or not verify_password(credentials.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
-    user.last_login = datetime.utcnow()
+    # Column is a naive DateTime; store naive UTC (datetime.utcnow() is deprecated).
+    user.last_login = datetime.now(timezone.utc).replace(tzinfo=None)
     db.commit()
     token_data = {"sub": str(user.id), "email": user.email, "role": user.role}
     return TokenResponse(
@@ -62,6 +70,30 @@ def refresh_token(body: RefreshTokenRequest, db: Session = Depends(get_db)):
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.put("/me", response_model=UserResponse)
+def update_me(
+    body: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Update the caller's own profile. Role and activation are admin-controlled
+    and therefore ignored here — a user cannot escalate their own privileges."""
+    updates = body.model_dump(exclude_unset=True, exclude={"role", "is_active"})
+    for field, value in updates.items():
+        setattr(current_user, field, value)
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+
+@router.get("/users", response_model=List[UserResponse])
+def list_users(
+    db: Session = Depends(get_db),
+    _: User = Depends(require_roles(ADMIN_ROLES)),
+):
+    return db.query(User).order_by(User.id).all()
 
 
 @router.post("/change-password")

@@ -18,7 +18,6 @@ class TestRegister:
     def test_register_success(self, client: TestClient):
         resp = client.post("/api/v1/auth/register", json={
             "email": "newuser@test.com",
-            "username": "newuser",
             "password": "Secure@123",
             "full_name": "New User",
             "role": "demand_planner",
@@ -32,27 +31,26 @@ class TestRegister:
     def test_register_duplicate_email_returns_409(self, client: TestClient, admin_user):
         resp = client.post("/api/v1/auth/register", json={
             "email": "admin@genxsop.com",  # already exists
-            "username": "admin2",
             "password": "Secure@123",
             "full_name": "Duplicate",
             "role": "demand_planner",
         })
         assert resp.status_code == 409
 
-    def test_register_duplicate_username_returns_409(self, client: TestClient, admin_user):
+    def test_register_duplicate_email_is_case_sensitive_match_only(self, client: TestClient, admin_user):
+        """Email is the sole account identity — there is no separate username.
+        A distinct email registers successfully even with an identical name."""
         resp = client.post("/api/v1/auth/register", json={
             "email": "unique@test.com",
-            "username": "admin",  # already exists
             "password": "Secure@123",
-            "full_name": "Duplicate",
+            "full_name": "Admin User",  # same display name as the existing admin
             "role": "demand_planner",
         })
-        assert resp.status_code == 409
+        assert resp.status_code == 201
 
     def test_register_invalid_email_returns_422(self, client: TestClient):
         resp = client.post("/api/v1/auth/register", json={
             "email": "not-an-email",
-            "username": "user1",
             "password": "Secure@123",
             "full_name": "Test",
             "role": "demand_planner",
@@ -65,10 +63,12 @@ class TestRegister:
 
 
 class TestLogin:
+    """Login takes a JSON body of {email, password} — see LoginRequest and
+    frontend/src/services/authService.ts."""
 
     def test_login_success(self, client: TestClient, admin_user):
-        resp = client.post("/api/v1/auth/login", data={
-            "username": "admin@genxsop.com",
+        resp = client.post("/api/v1/auth/login", json={
+            "email": "admin@genxsop.com",
             "password": "Admin@123",
         })
         assert resp.status_code == 200
@@ -77,22 +77,22 @@ class TestLogin:
         assert data["token_type"] == "bearer"
 
     def test_login_wrong_password_returns_401(self, client: TestClient, admin_user):
-        resp = client.post("/api/v1/auth/login", data={
-            "username": "admin@genxsop.com",
+        resp = client.post("/api/v1/auth/login", json={
+            "email": "admin@genxsop.com",
             "password": "WrongPassword",
         })
         assert resp.status_code == 401
 
     def test_login_nonexistent_user_returns_401(self, client: TestClient):
-        resp = client.post("/api/v1/auth/login", data={
-            "username": "ghost@test.com",
+        resp = client.post("/api/v1/auth/login", json={
+            "email": "ghost@test.com",
             "password": "Any@123",
         })
         assert resp.status_code == 401
 
     def test_login_returns_jwt_token(self, client: TestClient, admin_user):
-        resp = client.post("/api/v1/auth/login", data={
-            "username": "admin@genxsop.com",
+        resp = client.post("/api/v1/auth/login", json={
+            "email": "admin@genxsop.com",
             "password": "Admin@123",
         })
         token = resp.json()["access_token"]

@@ -160,3 +160,25 @@ class TestSupplyGapAnalysis:
         items = data.get("items", data) if isinstance(data, dict) else data
         for item in items:
             assert item["product_id"] == product.id
+
+
+class TestSupplyPlanConstraintErrors:
+
+    def test_duplicate_business_key_returns_409_not_500(
+        self, client: TestClient, admin_headers, product
+    ):
+        """uq_supply_plans_business_key covers (product_id, period, location,
+        version). The second insert must surface as a clean 409 rather than an
+        unhandled IntegrityError leaking a SQL traceback as a 500."""
+        payload = {
+            "product_id": product.id,
+            "period": "2026-04-01",
+            "location": "Main",
+            "planned_prod_qty": "100.00",
+        }
+        first = client.post("/api/v1/supply/plans", headers=admin_headers, json=payload)
+        assert first.status_code == 201
+
+        second = client.post("/api/v1/supply/plans", headers=admin_headers, json=payload)
+        assert second.status_code == 409
+        assert second.json()["error"]["code"] == "CONSTRAINT_VIOLATION"

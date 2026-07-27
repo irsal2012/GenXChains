@@ -405,3 +405,176 @@ class TestProductionScheduling:
         assert compare_data["supply_plan_id"] == supply_plan.id
         assert compare_data["base_version"] == 1
         assert compare_data["target_version"] == 1
+
+    def test_machine_eligibility_filters_impacted_rows(self, client: TestClient, admin_headers, supply_plan):
+        client.put(
+            "/api/v1/config/policies",
+            headers=admin_headers,
+            json={
+                "scope": "global",
+                "name": "default",
+                "config": {
+                    "auto_publish": False,
+                    "maker_checker_required": True,
+                    "maker_checker_threshold_pct": 20,
+                    "max_resequence_distance": 5,
+                    "machine_eligibility": {
+                        "default": {
+                            "allowed_workcenters": ["WC-2"],
+                            "allowed_lines": ["Line-1"],
+                        },
+                        "by_product": {},
+                    },
+                    "alternate_routings": {
+                        "default": {"WC-1": ["WC-2"], "WC-2": ["WC-1"]},
+                        "by_product": {},
+                    },
+                },
+            },
+        )
+
+        client.post(
+            "/api/v1/production-scheduling/generate",
+            headers=admin_headers,
+            json={
+                "supply_plan_id": supply_plan.id,
+                "workcenters": ["WC-1", "WC-2"],
+                "lines": ["Line-1"],
+                "shifts": ["Shift-A"],
+            },
+        )
+
+        resp = client.post(
+            "/api/v1/production-scheduling/events/recommendation",
+            headers=admin_headers,
+            json={
+                "event_type": "MACHINE_DOWN",
+                "severity": "high",
+                "event_timestamp": "2026-03-01T15:00:00Z",
+                "supply_plan_id": supply_plan.id,
+            },
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert "machine eligibility" in body["recommendation_summary"].lower()
+
+    def test_alternate_routing_used_when_scoped_row_ineligible(self, client: TestClient, admin_headers, supply_plan):
+        client.put(
+            "/api/v1/config/policies",
+            headers=admin_headers,
+            json={
+                "scope": "global",
+                "name": "default",
+                "config": {
+                    "auto_publish": False,
+                    "maker_checker_required": True,
+                    "maker_checker_threshold_pct": 20,
+                    "max_resequence_distance": 5,
+                    "machine_eligibility": {
+                        "default": {
+                            "allowed_workcenters": ["WC-2"],
+                            "allowed_lines": ["Line-1"],
+                        },
+                        "by_product": {},
+                    },
+                    "alternate_routings": {
+                        "default": {"WC-1": ["WC-2"], "WC-2": ["WC-1"]},
+                        "by_product": {},
+                    },
+                },
+            },
+        )
+
+        client.post(
+            "/api/v1/production-scheduling/generate",
+            headers=admin_headers,
+            json={
+                "supply_plan_id": supply_plan.id,
+                "workcenters": ["WC-1", "WC-2"],
+                "lines": ["Line-1"],
+                "shifts": ["Shift-A"],
+            },
+        )
+
+        resp = client.post(
+            "/api/v1/production-scheduling/events/recommendation",
+            headers=admin_headers,
+            json={
+                "event_type": "MACHINE_DOWN",
+                "severity": "high",
+                "event_timestamp": "2026-03-01T15:10:00Z",
+                "supply_plan_id": supply_plan.id,
+                "workcenter": "WC-1",
+                "line": "Line-1",
+                "shift": "Shift-A",
+            },
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert "alternate routing" in body["recommendation_summary"].lower()
+
+        schedule_rows = client.get(
+            f"/api/v1/production-scheduling/schedules?supply_plan_id={supply_plan.id}",
+            headers=admin_headers,
+        ).json()
+        by_id = {int(r["id"]): r for r in schedule_rows}
+        action_schedule_id = body["actions"][0]["schedule_id"]
+        assert by_id[action_schedule_id]["workcenter"] == "WC-2"
+
+    def test_recommendation_fails_when_no_eligible_rows_after_constraints(
+        self,
+        client: TestClient,
+        admin_headers,
+        supply_plan,
+    ):
+        client.put(
+            "/api/v1/config/policies",
+            headers=admin_headers,
+            json={
+                "scope": "global",
+                "name": "default",
+                "config": {
+                    "auto_publish": False,
+                    "maker_checker_required": True,
+                    "maker_checker_threshold_pct": 20,
+                    "max_resequence_distance": 5,
+                    "machine_eligibility": {
+                        "default": {
+                            "allowed_workcenters": ["WC-9"],
+                            "allowed_lines": ["Line-9"],
+                        },
+                        "by_product": {},
+                    },
+                    "alternate_routings": {
+                        "default": {},
+                        "by_product": {},
+                    },
+                },
+            },
+        )
+
+        client.post(
+            "/api/v1/production-scheduling/generate",
+            headers=admin_headers,
+            json={
+                "supply_plan_id": supply_plan.id,
+                "workcenters": ["WC-1", "WC-2"],
+                "lines": ["Line-1"],
+                "shifts": ["Shift-A"],
+            },
+        )
+
+        resp = client.post(
+            "/api/v1/production-scheduling/events/recommendation",
+            headers=admin_headers,
+            json={
+                "event_type": "MACHINE_DOWN",
+                "severity": "high",
+                "event_timestamp": "2026-03-01T15:20:00Z",
+                "supply_plan_id": supply_plan.id,
+            },
+        )
+        assert resp.status_code == 400
+        detail = resp.json().get("detail")
+        detail_text = detail if isinstance(detail, str) else str(detail)
+        assert "no eligible schedule rows" in detail_text.lower()

@@ -101,7 +101,7 @@ def to_http_exception(exc: GenXSOPException) -> HTTPException:
     """
     mapping = {
         "NOT_FOUND": status.HTTP_404_NOT_FOUND,
-        "DUPLICATE_ENTITY": status.HTTP_400_BAD_REQUEST,
+        "DUPLICATE_ENTITY": status.HTTP_409_CONFLICT,
         "BUSINESS_RULE_VIOLATION": status.HTTP_400_BAD_REQUEST,
         "INVALID_STATE_TRANSITION": status.HTTP_400_BAD_REQUEST,
         "INSUFFICIENT_PERMISSIONS": status.HTTP_403_FORBIDDEN,

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from math import ceil
 from app.database import get_db
+from app.core.exceptions import DuplicateEntityException, to_http_exception
 from app.models.product import Product, Category
 from app.models.user import User
 from app.schemas.product import (
@@ -72,7 +73,7 @@ def create_product(
 ):
     existing = db.query(Product).filter(Product.sku == data.sku).first()
     if existing:
-        raise HTTPException(status_code=400, detail="SKU already exists")
+        raise to_http_exception(DuplicateEntityException("Product", "sku", data.sku))
     product = Product(**data.model_dump())
     db.add(product)
     db.commit()

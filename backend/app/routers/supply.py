@@ -10,7 +10,7 @@ from app.database import get_db
 from app.models.user import User
 from app.schemas.supply import (
     SupplyPlanCreate, SupplyPlanUpdate, SupplyPlanResponse,
-    SupplyPlanListResponse, GapAnalysisItem,
+    SupplyPlanListResponse, SupplyPlanRejectRequest, GapAnalysisItem,
 )
 from app.dependencies import get_current_user, require_roles
 from app.services.supply_service import SupplyService
@@ -87,6 +87,20 @@ def approve_supply_plan(
     current_user: User = Depends(require_roles(APPROVER_ROLES)),
 ):
     return service.approve_plan(plan_id, user_id=current_user.id)
+
+
+@router.post("/plans/{plan_id}/reject", response_model=SupplyPlanResponse)
+def reject_supply_plan(
+    plan_id: int,
+    body: Optional[SupplyPlanRejectRequest] = None,
+    service: SupplyService = Depends(get_supply_service),
+    current_user: User = Depends(require_roles(APPROVER_ROLES)),
+):
+    return service.reject_plan(
+        plan_id,
+        user_id=current_user.id,
+        reason=body.text if body else None,
+    )
 
 
 @router.delete("/plans/{plan_id}")

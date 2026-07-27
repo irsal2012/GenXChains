@@ -1,7 +1,7 @@
 """
 Inventory Service — Service Layer (SRP / DIP)
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from uuid import uuid4
 from math import ceil
 from typing import Optional, List, Tuple
@@ -50,6 +50,7 @@ from app.schemas.inventory import (
 )
 from app.core.exceptions import EntityNotFoundException, to_http_exception
 from app.utils.events import get_event_bus, EntityUpdatedEvent
+from app.utils.time import utc_now
 
 
 class InventoryService:
@@ -117,7 +118,7 @@ class InventoryService:
     ) -> InventoryOptimizationRunResponse:
         scope = self._repo.list_for_policy(product_id=payload.product_id, location=payload.location)
         run_id = str(uuid4())
-        started_at = datetime.utcnow()
+        started_at = utc_now()
 
         run = InventoryPolicyRun(
             run_id=run_id,
@@ -125,7 +126,9 @@ class InventoryService:
             product_id=payload.product_id,
             location=payload.location,
             requested_by=user_id,
-            parameters_json=json.dumps(payload.model_dump()),
+            # mode="json" coerces Decimal/date fields to JSON-native types;
+            # a plain model_dump() raises TypeError on any Decimal parameter.
+            parameters_json=json.dumps(payload.model_dump(mode="json")),
             processed_count=len(scope),
             started_at=started_at,
         )
@@ -197,7 +200,7 @@ class InventoryService:
         except Exception as exc:  # noqa: BLE001
             error = str(exc)
         finally:
-            completed_at = datetime.utcnow()
+            completed_at = utc_now()
             result_payload = {
                 "run_id": run_id,
                 "processed_count": len(scope),
@@ -226,7 +229,7 @@ class InventoryService:
             processed_count=len(scope),
             updated_count=updated,
             exception_count=len(exceptions),
-            generated_at=datetime.utcnow(),
+            generated_at=utc_now(),
             exceptions=exceptions,
         )
 
@@ -500,7 +503,7 @@ class InventoryService:
             "status": payload.decision,
             "decision_notes": payload.notes,
             "decided_by": user_id,
-            "decided_at": datetime.utcnow(),
+            "decided_at": utc_now(),
         }
 
         inv = self.get_inventory(rec.inventory_id)
@@ -554,7 +557,7 @@ class InventoryService:
                 "status": "accepted",
                 "decision_notes": payload.notes or "Approved for application",
                 "decided_by": user_id,
-                "decided_at": datetime.utcnow(),
+                "decided_at": utc_now(),
             },
         )
         inv = self.get_inventory(rec.inventory_id)
@@ -569,7 +572,7 @@ class InventoryService:
         return [self._compute_data_quality(inv) for inv in scope]
 
     def get_escalations(self) -> List[InventoryEscalationItem]:
-        today = datetime.utcnow().date()
+        today = utc_now().date()
         open_ex = self._exception_repo.list_filtered(status="open")
         in_progress_ex = self._exception_repo.list_filtered(status="in_progress")
         all_ex = open_ex + in_progress_ex
@@ -827,7 +830,7 @@ class InventoryService:
         if total_decided > 0:
             acceptance_rate = round(((len(accepted) + len(applied)) / total_decided) * 100, 1)
 
-        now = datetime.utcnow().date()
+        now = utc_now().date()
         open_ex = self._exception_repo.list_filtered(status="open")
         in_progress_ex = self._exception_repo.list_filtered(status="in_progress")
         open_total = len(open_ex) + len(in_progress_ex)
@@ -839,7 +842,7 @@ class InventoryService:
         autonomous_24h = len([
             rec for rec in applied
             if rec.decision_notes and "Autonomous apply" in rec.decision_notes
-            and rec.decided_at and (datetime.utcnow() - rec.decided_at).total_seconds() <= 86400
+            and rec.decided_at and (utc_now() - rec.decided_at).total_seconds() <= 86400
         ])
 
         if len(pending) > 50 or len(overdue) > 20:
@@ -1183,7 +1186,7 @@ class InventoryService:
                     },
                 )
             else:
-                default_due = datetime.utcnow().date() + timedelta(days=2 if severity == "high" else 5)
+                default_due = utc_now().date() + timedelta(days=2 if severity == "high" else 5)
                 existing = self._exception_repo.create(
                     self._exception_repo.model(
                         inventory_id=inv.id,
@@ -1264,7 +1267,7 @@ class InventoryService:
 
         freshness_score = 1.0
         if inv.updated_at:
-            age_hours = (datetime.utcnow() - inv.updated_at).total_seconds() / 3600
+            age_hours = (utc_now() - inv.updated_at).total_seconds() / 3600
             if age_hours > 168:
                 freshness_score = 0.5
             elif age_hours > 72:

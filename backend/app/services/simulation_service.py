@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy.orm import Session
@@ -11,6 +10,7 @@ from app.repositories.simulation_run_repository import SimulationRunRepository
 from app.schemas.agentic_scheduling import AgenticScheduleAction, AgenticScheduleEventRequest
 from app.schemas.simulation import SimulationRunCreateRequest, SimulationRunResponse
 from app.services.agentic_orchestration_service import AgenticOrchestrationService
+from app.utils.time import utc_now
 
 
 class SimulationService:
@@ -57,7 +57,7 @@ class SimulationService:
             event = AgenticScheduleEventRequest(
                 event_type=body.event_type,
                 severity=body.severity,
-                event_timestamp=datetime.utcnow(),
+                event_timestamp=utc_now(),
             )
 
         orchestration = self._orchestrator.orchestrate(body=event, candidate_actions=[action])
@@ -72,7 +72,7 @@ class SimulationService:
             result_json=orchestration.model_dump_json(),
             error=None if orchestration.workflow_state != "FAILED" else "No feasible alternatives",
             created_by=user_id,
-            completed_at=datetime.utcnow(),
+            completed_at=utc_now(),
         )
         self._db.add(run)
         self._db.commit()

@@ -84,8 +84,11 @@ class SOPCycleService:
             4: "step_4_status",
             5: "step_5_status",
         }
-        current_step_field = step_map[cycle.current_step]
-        next_step = cycle.current_step + 1
+        # Captured before the update: _repo.update mutates `cycle` in place, so
+        # reading current_step afterwards would report the post-advance value.
+        previous_step = cycle.current_step
+        current_step_field = step_map[previous_step]
+        next_step = previous_step + 1
         updates = {
             current_step_field: "completed",
             "current_step": next_step,
@@ -93,7 +96,7 @@ class SOPCycleService:
         result = self._repo.update(cycle, updates)
         self._bus.publish(PlanStatusChangedEvent(
             entity_type="sop_cycle", entity_id=cycle_id, user_id=user_id,
-            old_status=f"step_{cycle.current_step}",
+            old_status=f"step_{previous_step}",
             new_status=f"step_{next_step}",
         ))
         return result
@@ -101,6 +104,7 @@ class SOPCycleService:
     def complete_cycle(self, cycle_id: int, user_id: int) -> SOPCycle:
         """Mark the entire S&OP cycle as completed."""
         cycle = self.get_cycle(cycle_id)
+        old_status = cycle.overall_status
         updates = {
             "step_5_status": "completed",
             "overall_status": "completed",
@@ -108,7 +112,7 @@ class SOPCycleService:
         result = self._repo.update(cycle, updates)
         self._bus.publish(PlanStatusChangedEvent(
             entity_type="sop_cycle", entity_id=cycle_id, user_id=user_id,
-            old_status="active", new_status="completed",
+            old_status=old_status, new_status="completed",
         ))
         return result
 

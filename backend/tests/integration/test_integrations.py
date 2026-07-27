@@ -25,7 +25,9 @@ def test_sync_products_requires_auth(client: TestClient):
         "/api/v1/integrations/erp/products/sync",
         json={"meta": {"source_system": "ERP"}, "items": []},
     )
-    assert resp.status_code == 403
+    # Missing credentials is 401 (authenticate); 403 is reserved for an
+    # authenticated caller lacking the required role.
+    assert resp.status_code == 401
 
 
 def test_sync_products_forbidden_for_non_integration_role(client: TestClient, db):

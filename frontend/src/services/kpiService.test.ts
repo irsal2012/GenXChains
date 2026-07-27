@@ -70,3 +70,55 @@ describe('kpiService (normalization)', () => {
     expect(res.items[0].value).toBeCloseTo(94.2)
   })
 })
+
+describe('kpiService.getMetric (history by name)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('requests the by-name route, not /kpi/metrics/{id}', async () => {
+    // /kpi/metrics/{metric_id} takes a numeric id and returns one record;
+    // sending a name there is a 422. History lives on the by-name route.
+    (api.get as any).mockResolvedValue({ data: [] })
+
+    await kpiService.getMetric('OTIF')
+
+    expect(api.get).toHaveBeenCalledWith('/kpi/metrics/by-name/OTIF')
+  })
+
+  it('percent-encodes names containing URL-significant characters', async () => {
+    (api.get as any).mockResolvedValue({ data: [] })
+
+    await kpiService.getMetric('Fill Rate / Q1')
+
+    expect(api.get).toHaveBeenCalledWith('/kpi/metrics/by-name/Fill%20Rate%20%2F%20Q1')
+  })
+
+  it('normalizes numeric strings in the returned series', async () => {
+    (api.get as any).mockResolvedValue({
+      data: [
+        {
+          id: 3,
+          metric_name: 'OTIF',
+          metric_category: 'service',
+          period: '2026-03-01',
+          value: '95.5',
+          target: '98.0',
+          created_at: '2026-03-01T00:00:00Z',
+        },
+      ],
+    })
+
+    const res = await kpiService.getMetric('OTIF')
+    expect(res).toHaveLength(1)
+    expect(typeof res[0].value).toBe('number')
+    expect(res[0].value).toBeCloseTo(95.5)
+    expect(res[0].target).toBeCloseTo(98)
+  })
+
+  it('returns an empty array when the response is not a list', async () => {
+    (api.get as any).mockResolvedValue({ data: null })
+
+    expect(await kpiService.getMetric('Unknown')).toEqual([])
+  })
+})

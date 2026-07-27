@@ -21,7 +21,7 @@ class Scenario(Base):
             name="ck_scenarios_status",
         ),
         CheckConstraint(
-            "scenario_type IN ('what_if', 'baseline', 'stress_test')",
+            "scenario_type IN ('what_if', 'baseline', 'stress_test', 'best_case', 'worst_case')",
             name="ck_scenarios_type",
         ),
         Index("ix_scenarios_status_created_at", "status", "created_at"),

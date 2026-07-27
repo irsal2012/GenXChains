@@ -32,6 +32,14 @@ def dashboard_alerts(
     return service.get_alerts()
 
 
+@router.get("/kpi-overview")
+def kpi_overview(
+    service: DashboardService = Depends(get_dashboard_service),
+    _: User = Depends(get_current_user),
+):
+    return service.get_kpi_overview()
+
+
 @router.get("/sop-status")
 def sop_status(
     service: DashboardService = Depends(get_dashboard_service),

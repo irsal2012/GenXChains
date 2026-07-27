@@ -18,6 +18,7 @@ from app.schemas.integration import (
     CanonicalProductionEventResponse,
     ProductionEventReplayResponse,
 )
+from app.utils.time import utc_now
 
 
 class IntegrationService:
@@ -122,7 +123,7 @@ class IntegrationService:
                 inv.on_hand_qty = item.on_hand_qty
                 inv.allocated_qty = item.allocated_qty
                 inv.in_transit_qty = item.in_transit_qty
-                inv.updated_at = datetime.utcnow()
+                inv.updated_at = utc_now()
                 updated += 1
             else:
                 self._db.add(
@@ -336,7 +337,7 @@ class IntegrationService:
             max_retries=payload.max_retries,
             out_of_order=1 if out_of_order else 0,
             last_error=last_error,
-            processed_at=datetime.utcnow(),
+            processed_at=utc_now(),
         )
         self._db.add(row)
         self._db.commit()
@@ -375,12 +376,12 @@ class IntegrationService:
             row.dead_letter_reason = (
                 f"Replay retry budget exceeded (retry_count={row.retry_count}, max_retries={row.max_retries})."
             )
-            row.dead_lettered_at = datetime.utcnow()
+            row.dead_lettered_at = utc_now()
         else:
             row.processing_status = "REPLAYED"
             row.dead_letter_reason = None
             row.dead_lettered_at = None
-        row.processed_at = datetime.utcnow()
+        row.processed_at = utc_now()
         row.last_error = None if row.processing_status == "REPLAYED" else row.dead_letter_reason
         self._db.commit()
         self._db.refresh(row)

@@ -18,6 +18,16 @@ class KPIMetricCreate(KPIMetricBase):
     pass
 
 
+class KPIMetricUpdate(BaseModel):
+    metric_name: Optional[str] = None
+    metric_category: Optional[str] = None
+    period: Optional[date] = None
+    value: Optional[Decimal] = None
+    target: Optional[Decimal] = None
+    previous_value: Optional[Decimal] = None
+    unit: Optional[str] = None
+
+
 class KPIMetricResponse(KPIMetricBase):
     id: int
     variance: Optional[Decimal] = None

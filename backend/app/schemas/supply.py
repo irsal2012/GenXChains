@@ -77,3 +77,14 @@ class GapAnalysisItem(BaseModel):
     gap: Decimal
     gap_pct: float
     status: str
+
+
+class SupplyPlanRejectRequest(BaseModel):
+    """Rejection payload. The SPA sends `reason`; `comment` is accepted as an
+    alias so either caller convention works."""
+    reason: Optional[str] = None
+    comment: Optional[str] = None
+
+    @property
+    def text(self) -> Optional[str]:
+        return self.reason or self.comment

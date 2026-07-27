@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
 from typing import List
 from uuid import uuid4
 
@@ -11,9 +10,11 @@ from app.core.exceptions import BusinessRuleViolationException, EntityNotFoundEx
 from app.models.agentic_schedule_recommendation import AgenticScheduleRecommendation
 from app.models.production_schedule_snapshot import ProductionScheduleSnapshot
 from app.repositories.agentic_schedule_recommendation_repository import AgenticScheduleRecommendationRepository
+from app.repositories.agentic_scheduling_config_repository import AgenticSchedulingConfigRepository
 from app.repositories.production_schedule_repository import ProductionScheduleRepository
 from app.repositories.production_schedule_snapshot_repository import ProductionScheduleSnapshotRepository
 from app.services.agentic_orchestration_service import AgenticOrchestrationService
+from app.services.agentic_scheduling_config_service import DEFAULT_POLICIES
 from app.schemas.agentic_scheduling import (
     AgenticRecommendationDecisionRequest,
     AgenticRecommendationModifyRequest,
@@ -25,6 +26,7 @@ from app.schemas.agentic_scheduling import (
     AgenticScheduleRecommendationResponse,
     AgenticScheduleRecommendationView,
 )
+from app.utils.time import utc_now
 
 
 class AgenticSchedulingService:
@@ -37,6 +39,7 @@ class AgenticSchedulingService:
     def __init__(self, db: Session):
         self._db = db
         self._repo = ProductionScheduleRepository(db)
+        self._config_repo = AgenticSchedulingConfigRepository(db)
         self._recommendation_repo = AgenticScheduleRecommendationRepository(db)
         self._snapshot_repo = ProductionScheduleSnapshotRepository(db)
         self._orchestrator = AgenticOrchestrationService()
@@ -74,6 +77,8 @@ class AgenticSchedulingService:
             shift=body.shift,
         )
 
+        rows, constraint_notes = self._apply_constraint_catalog(body=body, rows=rows)
+
         if not rows:
             recommendation_id = str(uuid4())
             workflow_id = str(uuid4())
@@ -102,8 +107,8 @@ class AgenticSchedulingService:
             event_type=body.event_type,
             severity=body.severity,
             impacted_rows=len(rows),
-            recommendation_summary=self._summary_text(body.event_type, len(actions), len(rows)),
-            explanation=self._explanation_text(body.event_type, body.severity),
+            recommendation_summary=self._summary_text(body.event_type, len(actions), len(rows), constraint_notes),
+            explanation=self._explanation_text(body.event_type, body.severity, constraint_notes),
             actions=actions,
         )
         recommendation.orchestration = self._orchestrator.orchestrate(
@@ -161,7 +166,7 @@ class AgenticSchedulingService:
             impacted_rows=row.impacted_rows,
             recommendation_summary=revised_summary,
             explanation=row.explanation,
-            actions_json=json.dumps([a.model_dump() for a in revised_actions]),
+            actions_json=json.dumps([a.model_dump(mode="json") for a in revised_actions]),
             state="PENDING_APPROVAL",
             status="pending_approval",
             decision_note=body.note,
@@ -195,7 +200,7 @@ class AgenticSchedulingService:
             updates={
                 "decision_note": body.note,
                 "decided_by": user_id,
-                "decided_at": datetime.utcnow(),
+                "decided_at": utc_now(),
             },
         )
         return self._to_view(row)
@@ -215,7 +220,7 @@ class AgenticSchedulingService:
             updates={
                 "decision_note": body.note,
                 "decided_by": user_id,
-                "decided_at": datetime.utcnow(),
+                "decided_at": utc_now(),
             },
         )
         return self._to_view(row)
@@ -248,7 +253,7 @@ class AgenticSchedulingService:
             updates={
                 "decision_note": note,
                 "published_by": user_id,
-                "published_at": datetime.utcnow(),
+                "published_at": utc_now(),
             },
         )
         return self._to_view(row)
@@ -414,18 +419,90 @@ class AgenticSchedulingService:
         ]
 
     @staticmethod
-    def _summary_text(event_type: str, action_count: int, impacted_rows: int) -> str:
-        return (
+    def _summary_text(event_type: str, action_count: int, impacted_rows: int, notes: List[str] | None = None) -> str:
+        base = (
             f"Event {event_type} classified. Generated {action_count} recommendation(s) "
             f"for {impacted_rows} impacted schedule row(s)."
         )
+        if notes:
+            return f"{base} Constraint catalog applied: {'; '.join(notes)}"
+        return base
 
     @staticmethod
-    def _explanation_text(event_type: str, severity: str) -> str:
-        return (
+    def _explanation_text(event_type: str, severity: str, notes: List[str] | None = None) -> str:
+        base = (
             f"Exception agent classified event as {event_type} (severity={severity}). "
             "Planner/constraint heuristics produced a candidate action with confidence scoring. "
             "Recommendation remains in pending approval state for human-in-the-loop control."
+        )
+        if notes:
+            return f"{base} Constraint details: {'; '.join(notes)}"
+        return base
+
+    def _apply_constraint_catalog(
+        self,
+        body: AgenticScheduleEventRequest,
+        rows,
+    ):
+        if not rows:
+            return rows, []
+
+        policy_row = self._config_repo.get_by_type_scope_name("policies", scope="global", name="default")
+        if policy_row and policy_row.config_json:
+            try:
+                policies = json.loads(policy_row.config_json)
+            except Exception:
+                policies = DEFAULT_POLICIES
+        else:
+            policies = DEFAULT_POLICIES
+
+        product_key = str(body.product_id) if body.product_id is not None else None
+        eligibility = (policies.get("machine_eligibility") or {}).get("default", {})
+        if product_key:
+            eligibility = (policies.get("machine_eligibility") or {}).get("by_product", {}).get(product_key, eligibility)
+
+        allowed_wcs = set(eligibility.get("allowed_workcenters") or [])
+        allowed_lines = set(eligibility.get("allowed_lines") or [])
+
+        eligible_rows = [
+            r for r in rows
+            if (not allowed_wcs or r.workcenter in allowed_wcs)
+            and (not allowed_lines or r.line in allowed_lines)
+        ]
+        if eligible_rows:
+            note = []
+            if len(eligible_rows) != len(rows):
+                note.append("ineligible rows filtered by machine eligibility rules")
+            return eligible_rows, note
+
+        routing = (policies.get("alternate_routings") or {}).get("default", {})
+        if product_key:
+            routing = (policies.get("alternate_routings") or {}).get("by_product", {}).get(product_key, routing)
+
+        source_wc = body.workcenter or rows[0].workcenter
+        alternates = routing.get(source_wc, []) if isinstance(routing, dict) else []
+        disruption_events = {"MACHINE_DOWN", "DOWNTIME_PLANNED", "LABOR_UNAVAILABLE", "MATERIAL_SHORTAGE"}
+        if alternates and body.event_type in disruption_events:
+            pool = self._repo.list_filtered(
+                product_id=body.product_id,
+                period=body.period,
+                supply_plan_id=body.supply_plan_id,
+                line=body.line,
+                shift=body.shift,
+            )
+            alternate_rows = [
+                r for r in pool
+                if r.workcenter in alternates
+                and (not allowed_wcs or r.workcenter in allowed_wcs)
+                and (not allowed_lines or r.line in allowed_lines)
+            ]
+            if alternate_rows:
+                return alternate_rows, [f"alternate routing used from {source_wc} -> {sorted(set(alternates))}"]
+
+        raise to_http_exception(
+            BusinessRuleViolationException(
+                "No eligible schedule rows after applying machine eligibility and alternate routing constraints."
+            )
         )
 
     def _persist_recommendation(
@@ -449,7 +526,7 @@ class AgenticSchedulingService:
             impacted_rows=payload.impacted_rows,
             recommendation_summary=payload.recommendation_summary,
             explanation=payload.explanation,
-            actions_json=json.dumps([a.model_dump() for a in payload.actions]),
+            actions_json=json.dumps([a.model_dump(mode="json") for a in payload.actions]),
             state="PENDING_APPROVAL",
             status="pending_approval",
             created_by=user_id,
@@ -506,7 +583,7 @@ class AgenticSchedulingService:
             recommendation_id=recommendation_id,
             snapshot_json=json.dumps(payload),
             published_by=user_id,
-            published_at=datetime.utcnow(),
+            published_at=utc_now(),
         )
         self._db.add(snapshot)
         self._db.commit()

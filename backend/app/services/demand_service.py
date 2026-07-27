@@ -119,25 +119,27 @@ class DemandService:
 
     def approve_plan(self, plan_id: int, body: ApprovalRequest, approver_id: int) -> DemandPlan:
         plan = self.get_plan(plan_id)
+        old_status = plan.status
         updates = {"status": "approved", "approved_by": approver_id}
         if body.comments:
             updates["notes"] = (plan.notes or "") + f"\n[Approved] {body.comments}"
         result = self._repo.update(plan, updates)
         self._bus.publish(PlanStatusChangedEvent(
             entity_type="demand_plan", entity_id=plan_id, user_id=approver_id,
-            old_status=plan.status, new_status="approved", comment=body.comments,
+            old_status=old_status, new_status="approved", comment=body.comments,
         ))
         return result
 
     def reject_plan(self, plan_id: int, body: ApprovalRequest, approver_id: int) -> DemandPlan:
         plan = self.get_plan(plan_id)
+        old_status = plan.status
         updates = {"status": "draft"}
         if body.comments:
             updates["notes"] = (plan.notes or "") + f"\n[Rejected] {body.comments}"
         result = self._repo.update(plan, updates)
         self._bus.publish(PlanStatusChangedEvent(
             entity_type="demand_plan", entity_id=plan_id, user_id=approver_id,
-            old_status=plan.status, new_status="draft", comment=body.comments,
+            old_status=old_status, new_status="draft", comment=body.comments,
         ))
         return result
 

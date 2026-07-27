@@ -9,7 +9,10 @@ from math import ceil
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.kpi import KPIMetricCreate, KPIMetricResponse, KPIMetricListResponse, KPIDashboardData, KPITargetRequest
+from app.schemas.kpi import (
+    KPIMetricCreate, KPIMetricUpdate, KPIMetricResponse, KPIMetricListResponse,
+    KPIDashboardData, KPITargetRequest,
+)
 from app.dependencies import get_current_user, require_roles
 from app.services.kpi_service import KPIService
 
@@ -57,6 +60,37 @@ def create_kpi_metric(
     return service.create_metric(data, user_id=current_user.id)
 
 
+@router.get("/summary")
+def kpi_summary(
+    service: KPIService = Depends(get_kpi_service),
+    _: User = Depends(get_current_user),
+):
+    return service.get_summary()
+
+
+@router.get("/trends")
+def kpi_trends(
+    category: Optional[str] = None,
+    months: int = Query(12, ge=1, le=60),
+    service: KPIService = Depends(get_kpi_service),
+    _: User = Depends(get_current_user),
+):
+    return service.get_trends(category=category, months=months)
+
+
+@router.get("/metrics/by-name/{metric_name}", response_model=List[KPIMetricResponse])
+def get_kpi_metric_history(
+    metric_name: str,
+    limit: int = Query(12, ge=1, le=120),
+    service: KPIService = Depends(get_kpi_service),
+    _: User = Depends(get_current_user),
+):
+    """History for a single metric. Declared before /metrics/{metric_id} is
+    irrelevant to matching (the paths differ in segment count), but the two are
+    distinct contracts: this one keys on name and returns a series."""
+    return service.get_metric_history(metric_name, limit=limit)
+
+
 @router.get("/metrics/{metric_id}", response_model=KPIMetricResponse)
 def get_kpi_metric(
     metric_id: int,
@@ -64,6 +98,16 @@ def get_kpi_metric(
     _: User = Depends(get_current_user),
 ):
     return service.get_metric(metric_id)
+
+
+@router.put("/metrics/{metric_id}", response_model=KPIMetricResponse)
+def update_kpi_metric(
+    metric_id: int,
+    data: KPIMetricUpdate,
+    service: KPIService = Depends(get_kpi_service),
+    current_user: User = Depends(require_roles(ADMIN_ROLES)),
+):
+    return service.update_metric(metric_id, data, user_id=current_user.id)
 
 
 @router.get("/dashboard", response_model=KPIDashboardData)

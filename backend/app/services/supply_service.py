@@ -59,23 +59,43 @@ class SupplyService:
         ))
         return result
 
-    def submit_plan(self, plan_id: int, user_id: int) -> SupplyPlan:
+    def _transition(
+        self,
+        plan_id: int,
+        new_status: str,
+        user_id: int,
+        comment: Optional[str] = None,
+        **extra_updates,
+    ) -> SupplyPlan:
+        """Apply a status transition and emit an accurate audit event.
+
+        `old_status` must be captured *before* the update — `plan` is the same
+        ORM instance the repository mutates, so reading it afterwards reports
+        the new status and the audit trail loses the original value.
+        """
         plan = self.get_plan(plan_id)
-        result = self._repo.update(plan, {"status": "submitted"})
+        old_status = plan.status
+        result = self._repo.update(plan, {"status": new_status, **extra_updates})
         self._bus.publish(PlanStatusChangedEvent(
             entity_type="supply_plan", entity_id=plan_id, user_id=user_id,
-            old_status=plan.status, new_status="submitted",
+            old_status=old_status, new_status=new_status, comment=comment,
         ))
         return result
 
+    def submit_plan(self, plan_id: int, user_id: int) -> SupplyPlan:
+        return self._transition(plan_id, "submitted", user_id)
+
     def approve_plan(self, plan_id: int, user_id: int) -> SupplyPlan:
-        plan = self.get_plan(plan_id)
-        result = self._repo.update(plan, {"status": "approved"})
-        self._bus.publish(PlanStatusChangedEvent(
-            entity_type="supply_plan", entity_id=plan_id, user_id=user_id,
-            old_status=plan.status, new_status="approved",
-        ))
-        return result
+        return self._transition(plan_id, "approved", user_id)
+
+    def reject_plan(self, plan_id: int, user_id: int, reason: Optional[str] = None) -> SupplyPlan:
+        """Reject a plan, returning it to draft for revision.
+
+        Mirrors demand-plan rejection: `ck_supply_plans_status` permits only
+        draft/submitted/approved, so rejection is modelled as a return to draft
+        with the reason captured in the audit event.
+        """
+        return self._transition(plan_id, "draft", user_id, comment=reason)
 
     def delete_plan(self, plan_id: int, user_id: int) -> None:
         plan = self.get_plan(plan_id)

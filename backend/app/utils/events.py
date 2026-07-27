@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional, Type
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -96,16 +97,26 @@ class AuditLogHandler(EventHandler):
     def __init__(self, db_session_factory: Callable):
         self._db_factory = db_session_factory
 
+    @staticmethod
+    def _dump(values: Any) -> str:
+        """Serialize an event payload defensively.
+
+        Audit writes must not be lost to a serialization error: payloads
+        routinely carry Decimal/date values that plain json.dumps rejects, and
+        this handler swallows exceptions, so a failure here silently drops the
+        audit record entirely.
+        """
+        return json.dumps(values, default=str)
+
     def handle(self, event: DomainEvent) -> None:
         from app.models.comment import AuditLog
         try:
-            import json
             db = self._db_factory()
             action = self._resolve_action(event)
             entity_type = getattr(event, "entity_type", "unknown")
             entity_id = getattr(event, "entity_id", 0)
-            old_values = json.dumps(getattr(event, "old_values", None))
-            new_values = json.dumps(getattr(event, "new_values", None))
+            old_values = self._dump(getattr(event, "old_values", None))
+            new_values = self._dump(getattr(event, "new_values", None))
             log = AuditLog(
                 user_id=event.user_id,
                 action=action,

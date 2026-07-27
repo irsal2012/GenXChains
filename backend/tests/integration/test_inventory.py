@@ -37,7 +37,7 @@ class TestInventoryCRUD:
 
     def test_list_inventory_unauthenticated_returns_401(self, client: TestClient):
         resp = client.get("/api/v1/inventory/")
-        assert resp.status_code == 403
+        assert resp.status_code == 401
 
 
 class TestInventoryHealth:

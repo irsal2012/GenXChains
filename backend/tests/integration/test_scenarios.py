@@ -16,8 +16,8 @@ class TestScenarioCRUD:
         resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
             "name": "Optimistic Q2 2026",
             "description": "Best-case demand scenario",
-            "scenario_type": "optimistic",
-            "assumptions": {"demand_growth": 0.15, "supply_capacity": 1.0},
+            "scenario_type": "best_case",
+            "parameters": {"demand_growth": 0.15, "supply_capacity": 1.0},
         })
         assert resp.status_code == 201
         data = resp.json()
@@ -29,7 +29,7 @@ class TestScenarioCRUD:
         # Create one first
         client.post("/api/v1/scenarios/", headers=admin_headers, json={
             "name": "Base Case",
-            "scenario_type": "base",
+            "scenario_type": "baseline",
         })
         resp = client.get("/api/v1/scenarios/", headers=admin_headers)
         assert resp.status_code == 200
@@ -40,7 +40,7 @@ class TestScenarioCRUD:
     def test_get_scenario_by_id(self, client: TestClient, admin_headers):
         create_resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
             "name": "Test Scenario",
-            "scenario_type": "pessimistic",
+            "scenario_type": "worst_case",
         })
         scenario_id = create_resp.json()["id"]
         resp = client.get(f"/api/v1/scenarios/{scenario_id}", headers=admin_headers)
@@ -54,7 +54,7 @@ class TestScenarioCRUD:
     def test_update_scenario(self, client: TestClient, admin_headers):
         create_resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
             "name": "Original Name",
-            "scenario_type": "base",
+            "scenario_type": "baseline",
         })
         scenario_id = create_resp.json()["id"]
         resp = client.put(f"/api/v1/scenarios/{scenario_id}", headers=admin_headers, json={
@@ -67,14 +67,14 @@ class TestScenarioCRUD:
     def test_delete_scenario(self, client: TestClient, admin_headers):
         create_resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
             "name": "To Delete",
-            "scenario_type": "base",
+            "scenario_type": "baseline",
         })
         scenario_id = create_resp.json()["id"]
         del_resp = client.delete(f"/api/v1/scenarios/{scenario_id}", headers=admin_headers)
         assert del_resp.status_code in (200, 204)
 
     def test_create_scenario_unauthenticated_returns_401(self, client: TestClient):
-        resp = client.post("/api/v1/scenarios/", json={"name": "Hack", "scenario_type": "base"})
+        resp = client.post("/api/v1/scenarios/", json={"name": "Hack", "scenario_type": "baseline"})
         assert resp.status_code == 401
 
 
@@ -83,7 +83,7 @@ class TestScenarioWorkflow:
     def test_submit_scenario(self, client: TestClient, admin_headers):
         create_resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
             "name": "Submit Test",
-            "scenario_type": "optimistic",
+            "scenario_type": "best_case",
         })
         scenario_id = create_resp.json()["id"]
         resp = client.post(f"/api/v1/scenarios/{scenario_id}/submit", headers=admin_headers)
@@ -93,7 +93,7 @@ class TestScenarioWorkflow:
     def test_approve_scenario(self, client: TestClient, admin_headers):
         create_resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
             "name": "Approve Test",
-            "scenario_type": "base",
+            "scenario_type": "baseline",
         })
         scenario_id = create_resp.json()["id"]
         client.post(f"/api/v1/scenarios/{scenario_id}/submit", headers=admin_headers)
@@ -170,16 +170,38 @@ class TestScenarioComparison:
     def test_compare_scenarios(self, client: TestClient, admin_headers):
         # Create two scenarios
         s1 = client.post("/api/v1/scenarios/", headers=admin_headers, json={
-            "name": "Scenario A", "scenario_type": "optimistic",
+            "name": "Scenario A", "scenario_type": "best_case",
         }).json()["id"]
         s2 = client.post("/api/v1/scenarios/", headers=admin_headers, json={
-            "name": "Scenario B", "scenario_type": "pessimistic",
+            "name": "Scenario B", "scenario_type": "worst_case",
         }).json()["id"]
 
-        resp = client.get(
-            f"/api/v1/scenarios/compare?ids={s1}&ids={s2}",
+        resp = client.post(
+            "/api/v1/scenarios/compare",
             headers=admin_headers,
+            json={"scenario_ids": [s1, s2]},
         )
         assert resp.status_code == 200
         data = resp.json()
         assert isinstance(data, (list, dict))
+
+
+class TestScenarioTypeValidation:
+
+    def test_supported_scenario_types_are_accepted(self, client: TestClient, admin_headers):
+        for scenario_type in ("what_if", "baseline", "stress_test", "best_case", "worst_case"):
+            resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
+                "name": f"Scenario {scenario_type}",
+                "scenario_type": scenario_type,
+            })
+            assert resp.status_code == 201, scenario_type
+            assert resp.json()["scenario_type"] == scenario_type
+
+    def test_unsupported_scenario_type_returns_422_not_500(self, client: TestClient, admin_headers):
+        """Rejected by the schema, so it never reaches ck_scenarios_type and
+        cannot surface as an unhandled database error."""
+        resp = client.post("/api/v1/scenarios/", headers=admin_headers, json={
+            "name": "Bad Type",
+            "scenario_type": "optimistic",
+        })
+        assert resp.status_code == 422

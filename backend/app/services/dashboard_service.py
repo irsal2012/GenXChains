@@ -101,6 +101,35 @@ class DashboardService:
             "total_alerts": len(critical_inv) + len(low_inv) + len(kpi_alerts),
         }
 
+    def get_kpi_overview(self) -> dict:
+        """Latest reading per KPI, grouped by category, for the dashboard grid."""
+        latest_by_name: dict = {}
+        for m in self._kpi_repo.list_filtered():
+            # list_filtered is newest-period-first, so the first hit per name wins.
+            latest_by_name.setdefault(m.metric_name, m)
+
+        categories: dict = {}
+        for metric in latest_by_name.values():
+            categories.setdefault(metric.metric_category, []).append({
+                "metric_name": metric.metric_name,
+                "period": str(metric.period),
+                "value": float(metric.value) if metric.value is not None else None,
+                "target": float(metric.target) if metric.target is not None else None,
+                "variance_pct": float(metric.variance_pct) if metric.variance_pct is not None else None,
+                "trend": metric.trend,
+                "unit": metric.unit,
+                "on_target": (
+                    bool(metric.value >= metric.target)
+                    if metric.value is not None and metric.target is not None
+                    else None
+                ),
+            })
+
+        return {
+            "total_metrics": len(latest_by_name),
+            "categories": categories,
+        }
+
     def get_sop_status(self) -> dict:
         """Return current S&OP cycle status for the dashboard widget."""
         cycle = self._sop_repo.get_active_cycle()

@@ -750,6 +750,9 @@ export function ForecastingPage() {
 
   const bestModelDisplay = bestModelByScore ?? bestModelByScoreOverall
 
+  // Retained for upcoming work: lowest-MAPE model, distinct from the
+  // score-ranked bestModelDisplay rendered today.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const bestModel = accuracy.length > 0
     ? accuracy.reduce((best, a) => a.mape < best.mape ? a : best, accuracy[0])
     : null
@@ -884,6 +887,9 @@ export function ForecastingPage() {
       consensus_qty: row.consensus_qty,
     }))
 
+  // Retained for upcoming work: MAPE-sorted dataset for a model-accuracy chart
+  // that is not mounted yet.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const accuracyChartData = [...accuracy]
     .sort((a, b) => a.mape - b.mape)
     .map((a) => ({

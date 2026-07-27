@@ -11,7 +11,7 @@ Note:
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timedelta
+from datetime import timedelta
 import json
 from typing import Optional, List
 from uuid import uuid4
@@ -21,6 +21,7 @@ from app.config import settings
 from app.models.forecast_job import ForecastJob
 from app.services.forecast_service import ForecastService
 from app.utils.events import get_event_bus, ForecastJobsCleanedEvent
+from app.utils.time import utc_now
 
 
 class ForecastJobService:
@@ -82,7 +83,7 @@ class ForecastJobService:
                 return None
             if job.status in {"queued", "running"}:
                 job.status = "cancelled"
-                job.completed_at = datetime.utcnow()
+                job.completed_at = utc_now()
                 job.error = "Cancelled by user"
                 db.commit()
                 db.refresh(job)
@@ -140,7 +141,7 @@ class ForecastJobService:
 
             avg_duration_ms = round(sum(durations_ms) / len(durations_ms), 2) if durations_ms else None
 
-            cutoff = datetime.utcnow() - timedelta(hours=24)
+            cutoff = utc_now() - timedelta(hours=24)
             failed_last_24h = sum(
                 1 for job in jobs
                 if job.status == "failed" and job.completed_at and job.completed_at >= cutoff
@@ -150,7 +151,7 @@ class ForecastJobService:
             oldest_queued_age_seconds = None
             if queued_jobs:
                 oldest_queued = min(queued_jobs, key=lambda j: j.created_at)
-                oldest_queued_age_seconds = round((datetime.utcnow() - oldest_queued.created_at).total_seconds(), 2)
+                oldest_queued_age_seconds = round((utc_now() - oldest_queued.created_at).total_seconds(), 2)
 
             return {
                 "total_jobs": total,
@@ -164,7 +165,7 @@ class ForecastJobService:
 
     def cleanup_old_jobs(self, retention_days: Optional[int] = None, requested_by: Optional[int] = None) -> dict:
         days = retention_days or settings.FORECAST_JOB_RETENTION_DAYS
-        cutoff = datetime.utcnow() - timedelta(days=days)
+        cutoff = utc_now() - timedelta(days=days)
         removable_statuses = ["completed", "failed", "cancelled"]
 
         db = SessionLocal()
@@ -206,7 +207,7 @@ class ForecastJobService:
                 return
 
             job.status = "running"
-            job.started_at = datetime.utcnow()
+            job.started_at = utc_now()
             db.commit()
 
             service = ForecastService(db)
@@ -236,14 +237,14 @@ class ForecastJobService:
             job.status = "completed"
             job.error = None
             job.result_json = json.dumps(result_payload)
-            job.completed_at = datetime.utcnow()
+            job.completed_at = utc_now()
             db.commit()
         except Exception as exc:  # noqa: BLE001
             job = db.query(ForecastJob).filter(ForecastJob.job_id == job_id).first()
             if job:
                 job.status = "failed"
                 job.error = str(exc)
-                job.completed_at = datetime.utcnow()
+                job.completed_at = utc_now()
                 db.commit()
         finally:
             db.close()

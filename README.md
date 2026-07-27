@@ -111,6 +111,29 @@ The API will be available at:
 - Set a non-default `SECRET_KEY`.
 - Set `AUTO_CREATE_TABLES=false` and apply schema changes via Alembic migrations.
 
+### Database migrations
+
+`alembic upgrade head` builds the full schema from empty and produces a database
+identical to `Base.metadata`. Alembic reads its URL from `app.config.settings`,
+so it always targets the same database as the API.
+
+```bash
+cd backend
+python scripts/db_bootstrap.py --check   # report the database's state
+alembic upgrade head                     # apply outstanding revisions
+alembic revision --autogenerate -m "..." # author a new revision
+```
+
+Databases created before the migration chain existed have no `alembic_version`
+row. Adopt one with `python scripts/db_bootstrap.py --stamp-legacy`; note that
+stamping records the version but does **not** retrofit constraints the database
+never received — `--check` lists which tables are affected, and a full rebuild
+(`--fresh` into a new file) is the only way to obtain a hardened schema.
+
+Every revision must run under SQLite as well as PostgreSQL, so constraint and
+column changes belong inside `op.batch_alter_table(...)`: SQLite cannot `ALTER`
+constraints in place.
+
 Run preflight check before deployment:
 
 ```bash

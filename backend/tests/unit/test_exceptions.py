@@ -78,10 +78,10 @@ class TestToHttpException:
         http_exc = to_http_exception(exc)
         assert http_exc.status_code == 400
 
-    def test_duplicate_entity_returns_400(self):
+    def test_duplicate_entity_returns_409(self):
         exc = DuplicateEntityException("Product", "sku", "SKU-001")
         http_exc = to_http_exception(exc)
-        assert http_exc.status_code == 400
+        assert http_exc.status_code == 409
 
     def test_invalid_state_transition_returns_400(self):
         exc = InvalidStateTransitionException("Plan", "draft", "locked")

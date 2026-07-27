@@ -7,7 +7,10 @@ from typing import List
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.scenario import ScenarioCreate, ScenarioUpdate, ScenarioResponse, ScenarioListResponse
+from app.schemas.scenario import (
+    ScenarioCreate, ScenarioUpdate, ScenarioResponse, ScenarioListResponse,
+    ScenarioCompareRequest,
+)
 from app.dependencies import get_current_user, require_roles
 from app.services.scenario_service import ScenarioService
 
@@ -107,11 +110,11 @@ def reject_scenario(
 
 @router.post("/compare")
 def compare_scenarios(
-    ids: List[int],
+    body: ScenarioCompareRequest,
     service: ScenarioService = Depends(get_scenario_service),
     _: User = Depends(get_current_user),
 ):
-    return service.compare_scenarios(ids)
+    return service.compare_scenarios(body.scenario_ids)
 
 
 @router.get("/{scenario_id}/tradeoff-summary")

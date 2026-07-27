@@ -15,55 +15,46 @@ branch_labels = None
 depends_on = None
 
 
+# SQLite cannot ALTER constraints in place, so the column/constraint changes to
+# agentic_schedule_recommendations run in batch mode (copy-and-move). Batch mode
+# is portable: on PostgreSQL it emits ordinary ALTER statements.
 def upgrade() -> None:
-    op.add_column(
-        "agentic_schedule_recommendations",
-        sa.Column("published_by", sa.Integer(), nullable=True),
-    )
-    op.add_column(
-        "agentic_schedule_recommendations",
-        sa.Column("published_at", sa.DateTime(), nullable=True),
-    )
-    op.add_column(
-        "agentic_schedule_recommendations",
-        sa.Column("source_recommendation_id", sa.String(length=64), nullable=True),
-    )
-    op.add_column(
-        "agentic_schedule_recommendations",
-        sa.Column("revision_number", sa.Integer(), nullable=False, server_default="1"),
-    )
+    with op.batch_alter_table("agentic_schedule_recommendations") as batch_op:
+        batch_op.add_column(sa.Column("published_by", sa.Integer(), nullable=True))
+        batch_op.add_column(sa.Column("published_at", sa.DateTime(), nullable=True))
+        batch_op.add_column(
+            sa.Column("source_recommendation_id", sa.String(length=64), nullable=True)
+        )
+        batch_op.add_column(
+            sa.Column("revision_number", sa.Integer(), nullable=False, server_default="1")
+        )
 
-    op.create_foreign_key(
-        "fk_agentic_sched_rec_published_by",
-        "agentic_schedule_recommendations",
-        "users",
-        ["published_by"],
-        ["id"],
-    )
+        batch_op.create_foreign_key(
+            "fk_agentic_sched_rec_published_by",
+            "users",
+            ["published_by"],
+            ["id"],
+        )
+        batch_op.create_foreign_key(
+            "fk_agentic_sched_rec_source_recommendation",
+            "agentic_schedule_recommendations",
+            ["source_recommendation_id"],
+            ["recommendation_id"],
+        )
 
-    op.create_foreign_key(
-        "fk_agentic_sched_rec_source_recommendation",
-        "agentic_schedule_recommendations",
-        "agentic_schedule_recommendations",
-        ["source_recommendation_id"],
-        ["recommendation_id"],
-    )
+        batch_op.drop_constraint("ck_agentic_sched_rec_state", type_="check")
+        batch_op.create_check_constraint(
+            "ck_agentic_sched_rec_state_v2",
+            "state IN ('RECEIVED', 'CLASSIFIED', 'PLANNED', 'VALIDATED', 'OPTIMIZED', 'SIMULATED', "
+            "'PENDING_APPROVAL', 'APPROVED', 'REJECTED', 'PUBLISHED', 'FAILED')",
+        )
+        batch_op.alter_column("state", server_default="SIMULATED")
 
-    op.create_check_constraint(
-        "ck_agentic_sched_rec_state_v2",
-        "agentic_schedule_recommendations",
-        "state IN ('RECEIVED', 'CLASSIFIED', 'PLANNED', 'VALIDATED', 'OPTIMIZED', 'SIMULATED', "
-        "'PENDING_APPROVAL', 'APPROVED', 'REJECTED', 'PUBLISHED', 'FAILED')",
-    )
-    op.drop_constraint("ck_agentic_sched_rec_state", "agentic_schedule_recommendations", type_="check")
-    op.alter_column("agentic_schedule_recommendations", "state", server_default="SIMULATED")
-
-    op.create_check_constraint(
-        "ck_agentic_sched_rec_status_v2",
-        "agentic_schedule_recommendations",
-        "status IN ('pending_approval', 'approved', 'rejected', 'published')",
-    )
-    op.drop_constraint("ck_agentic_sched_rec_status", "agentic_schedule_recommendations", type_="check")
+        batch_op.drop_constraint("ck_agentic_sched_rec_status", type_="check")
+        batch_op.create_check_constraint(
+            "ck_agentic_sched_rec_status_v2",
+            "status IN ('pending_approval', 'approved', 'rejected', 'published')",
+        )
 
     op.create_index(
         "ix_agentic_sched_rec_source_rec",
@@ -117,25 +108,24 @@ def downgrade() -> None:
     op.drop_index("ix_agentic_sched_rec_revision", table_name="agentic_schedule_recommendations")
     op.drop_index("ix_agentic_sched_rec_source_rec", table_name="agentic_schedule_recommendations")
 
-    op.create_check_constraint(
-        "ck_agentic_sched_rec_status",
-        "agentic_schedule_recommendations",
-        "status IN ('pending_approval', 'approved', 'rejected')",
-    )
-    op.drop_constraint("ck_agentic_sched_rec_status_v2", "agentic_schedule_recommendations", type_="check")
+    with op.batch_alter_table("agentic_schedule_recommendations") as batch_op:
+        batch_op.drop_constraint("ck_agentic_sched_rec_status_v2", type_="check")
+        batch_op.create_check_constraint(
+            "ck_agentic_sched_rec_status",
+            "status IN ('pending_approval', 'approved', 'rejected')",
+        )
 
-    op.alter_column("agentic_schedule_recommendations", "state", server_default="PENDING_APPROVAL")
-    op.create_check_constraint(
-        "ck_agentic_sched_rec_state",
-        "agentic_schedule_recommendations",
-        "state IN ('RECEIVED', 'CLASSIFIED', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED')",
-    )
-    op.drop_constraint("ck_agentic_sched_rec_state_v2", "agentic_schedule_recommendations", type_="check")
+        batch_op.alter_column("state", server_default="PENDING_APPROVAL")
+        batch_op.drop_constraint("ck_agentic_sched_rec_state_v2", type_="check")
+        batch_op.create_check_constraint(
+            "ck_agentic_sched_rec_state",
+            "state IN ('RECEIVED', 'CLASSIFIED', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED')",
+        )
 
-    op.drop_constraint("fk_agentic_sched_rec_source_recommendation", "agentic_schedule_recommendations", type_="foreignkey")
-    op.drop_constraint("fk_agentic_sched_rec_published_by", "agentic_schedule_recommendations", type_="foreignkey")
+        batch_op.drop_constraint("fk_agentic_sched_rec_source_recommendation", type_="foreignkey")
+        batch_op.drop_constraint("fk_agentic_sched_rec_published_by", type_="foreignkey")
 
-    op.drop_column("agentic_schedule_recommendations", "revision_number")
-    op.drop_column("agentic_schedule_recommendations", "source_recommendation_id")
-    op.drop_column("agentic_schedule_recommendations", "published_at")
+        batch_op.drop_column("revision_number")
+        batch_op.drop_column("source_recommendation_id")
+        batch_op.drop_column("published_at")
     op.drop_column("agentic_schedule_recommendations", "published_by")

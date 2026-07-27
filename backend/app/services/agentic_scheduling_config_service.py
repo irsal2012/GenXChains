@@ -21,6 +21,20 @@ DEFAULT_POLICIES: Dict[str, Any] = {
     "maker_checker_required": True,
     "maker_checker_threshold_pct": 20,
     "max_resequence_distance": 5,
+    "machine_eligibility": {
+        "default": {
+            "allowed_workcenters": ["WC-1", "WC-2"],
+            "allowed_lines": ["Line-1", "Line-2"],
+        },
+        "by_product": {},
+    },
+    "alternate_routings": {
+        "default": {
+            "WC-1": ["WC-2"],
+            "WC-2": ["WC-1"],
+        },
+        "by_product": {},
+    },
 }
 
 

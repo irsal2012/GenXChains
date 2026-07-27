@@ -1,14 +1,18 @@
-from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Any, Literal
 from datetime import datetime
 from decimal import Decimal
+
+# Mirrors ck_scenarios_type in the DB and ScenarioType in the SPA. Validating
+# here turns an invalid type into a 422 instead of a database IntegrityError.
+ScenarioType = Literal["what_if", "baseline", "stress_test", "best_case", "worst_case"]
 
 
 class ScenarioBase(BaseModel):
     name: str
     description: Optional[str] = None
-    scenario_type: str = "what_if"
-    parameters: Dict[str, Any] = {}
+    scenario_type: ScenarioType = "what_if"
+    parameters: Dict[str, Any] = Field(default_factory=dict)
 
 
 class ScenarioCreate(ScenarioBase):

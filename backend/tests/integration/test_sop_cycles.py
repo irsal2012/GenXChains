@@ -51,12 +51,12 @@ class TestSOPCycleCRUD:
         resp = client.get("/api/v1/sop-cycles/99999", headers=admin_headers)
         assert resp.status_code == 404
 
-    def test_create_sop_cycle_unauthenticated_returns_403(self, client: TestClient):
+    def test_create_sop_cycle_unauthenticated_returns_401(self, client: TestClient):
         resp = client.post("/api/v1/sop-cycles/", json={
             "cycle_name": "Hack Cycle",
             "period": "2026-03-01",
         })
-        assert resp.status_code == 403
+        assert resp.status_code == 401
 
 
 class TestSOPCycleStepAdvancement:
