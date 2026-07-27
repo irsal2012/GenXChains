@@ -4,8 +4,8 @@ set -euo pipefail
 # PostgreSQL backup/restore verification helper.
 #
 # Required env vars:
-#   SOURCE_DATABASE_URL          e.g. postgresql://user:pass@host:5432/genxsop
-#   RESTORE_DATABASE_URL         e.g. postgresql://user:pass@host:5432/genxsop_restore_check
+#   SOURCE_DATABASE_URL          e.g. postgresql://user:pass@host:5432/genxchains
+#   RESTORE_DATABASE_URL         e.g. postgresql://user:pass@host:5432/genxchains_restore_check
 #
 # Optional:
 #   BACKUP_DIR (default: ./backups)
@@ -19,7 +19,7 @@ BACKUP_DIR="${BACKUP_DIR:-./backups}"
 mkdir -p "${BACKUP_DIR}"
 
 ts="$(date +%Y%m%d_%H%M%S)"
-dump_file="${BACKUP_DIR}/genxsop_${ts}.dump"
+dump_file="${BACKUP_DIR}/genxchains_${ts}.dump"
 
 echo "[1/4] Creating logical backup: ${dump_file}"
 pg_dump --format=custom --file "${dump_file}" "${SOURCE_DATABASE_URL}"

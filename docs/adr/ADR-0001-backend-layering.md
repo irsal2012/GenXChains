@@ -4,7 +4,7 @@
 
 ## Context
 
-GenXSOP has multiple domains (demand, supply, inventory, forecasting, scenarios, S&OP cycles, KPI). We need a structure that:
+GenXChains has multiple domains (demand, supply, inventory, forecasting, scenarios, S&OP cycles, KPI). We need a structure that:
 
 - keeps HTTP concerns isolated from business rules,
 - keeps persistence concerns isolated from business rules,

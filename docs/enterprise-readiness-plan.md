@@ -1,6 +1,6 @@
-# GenXSOP Enterprise Readiness Plan (Reference + Execution)
+# GenXChains Enterprise Readiness Plan (Reference + Execution)
 
-This document defines a practical path to move GenXSOP from strong product architecture to enterprise-grade operational maturity.
+This document defines a practical path to move GenXChains from strong product architecture to enterprise-grade operational maturity.
 
 ## 1) Objective
 
@@ -13,7 +13,7 @@ Deliver enterprise-level outcomes across:
 
 ## 2) Current baseline (from existing architecture)
 
-GenXSOP already has:
+GenXChains already has:
 
 - Layered backend architecture (routers/services/repositories)
 - JWT auth and role-based authorization controls
@@ -134,9 +134,9 @@ Expected outcomes:
 - EPIC-5 Secure SDLC & Compliance Readiness
 - EPIC-6 Integration Reliability (ERP/WMS/BI)
 
-## 8) Definition of “Enterprise Ready” for GenXSOP
+## 8) Definition of “Enterprise Ready” for GenXChains
 
-GenXSOP is considered enterprise ready when all are true:
+GenXChains is considered enterprise ready when all are true:
 
 - Technical controls are implemented and measurable (not just documented)
 - Operational targets are monitored and consistently achieved

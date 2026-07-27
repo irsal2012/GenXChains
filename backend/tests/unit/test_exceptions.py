@@ -3,7 +3,7 @@ Unit Tests — Core Exception Hierarchy & Observer/EventBus Pattern
 """
 import pytest
 from app.core.exceptions import (
-    GenXSOPException,
+    GenXChainsException,
     EntityNotFoundException,
     BusinessRuleViolationException,
     DuplicateEntityException,
@@ -33,14 +33,14 @@ from app.utils.events import (
 class TestExceptionHierarchy:
 
     def test_all_exceptions_inherit_from_base(self):
-        assert issubclass(EntityNotFoundException, GenXSOPException)
-        assert issubclass(BusinessRuleViolationException, GenXSOPException)
-        assert issubclass(DuplicateEntityException, GenXSOPException)
-        assert issubclass(InvalidStateTransitionException, GenXSOPException)
-        assert issubclass(InsufficientPermissionsException, GenXSOPException)
-        assert issubclass(AuthenticationException, GenXSOPException)
-        assert issubclass(ForecastGenerationException, GenXSOPException)
-        assert issubclass(InsufficientDataException, GenXSOPException)
+        assert issubclass(EntityNotFoundException, GenXChainsException)
+        assert issubclass(BusinessRuleViolationException, GenXChainsException)
+        assert issubclass(DuplicateEntityException, GenXChainsException)
+        assert issubclass(InvalidStateTransitionException, GenXChainsException)
+        assert issubclass(InsufficientPermissionsException, GenXChainsException)
+        assert issubclass(AuthenticationException, GenXChainsException)
+        assert issubclass(ForecastGenerationException, GenXChainsException)
+        assert issubclass(InsufficientDataException, GenXChainsException)
 
     def test_entity_not_found_message(self):
         exc = EntityNotFoundException("DemandPlan", 42)

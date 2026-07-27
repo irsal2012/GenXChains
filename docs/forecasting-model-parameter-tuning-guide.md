@@ -1,6 +1,6 @@
 # Forecasting Guide: Finding the Best Model and Parameters
 
-This guide explains how to use GenXSOP forecasting APIs to:
+This guide explains how to use GenXChains forecasting APIs to:
 
 1. Compare forecasting models fairly with backtesting
 2. Tune model parameters using `parameter_grid`

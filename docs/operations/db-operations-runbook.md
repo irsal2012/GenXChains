@@ -1,6 +1,6 @@
 # DB Operations Runbook (P2)
 
-This runbook defines baseline enterprise DB operations for GenXSOP.
+This runbook defines baseline enterprise DB operations for GenXChains.
 
 ## 1) Migration governance gate (CI)
 
@@ -24,8 +24,8 @@ Use:
 
 ```bash
 cd backend
-SOURCE_DATABASE_URL='postgresql://user:pass@host:5432/genxsop' \
-RESTORE_DATABASE_URL='postgresql://user:pass@host:5432/genxsop_restore_check' \
+SOURCE_DATABASE_URL='postgresql://user:pass@host:5432/genxchains' \
+RESTORE_DATABASE_URL='postgresql://user:pass@host:5432/genxchains_restore_check' \
 bash scripts/backup_restore_runbook.sh
 ```
 

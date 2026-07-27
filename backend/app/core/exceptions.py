@@ -6,9 +6,9 @@ from fastapi import HTTPException, status
 from typing import Union
 
 
-class GenXSOPException(Exception):
-    """Base exception for all GenXSOP domain errors."""
-    def __init__(self, message: str, code: str = "GENXSOP_ERROR"):
+class GenXChainsException(Exception):
+    """Base exception for all GenXChains domain errors."""
+    def __init__(self, message: str, code: str = "GENXCHAINS_ERROR"):
         self.message = message
         self.code = code
         super().__init__(message)
@@ -16,7 +16,7 @@ class GenXSOPException(Exception):
 
 # ── 404 Not Found ────────────────────────────────────────────────────────────
 
-class EntityNotFoundException(GenXSOPException):
+class EntityNotFoundException(GenXChainsException):
     """Raised when a requested entity does not exist in the database."""
     def __init__(self, entity: str, entity_id: Union[int, str]):
         super().__init__(
@@ -29,13 +29,13 @@ class EntityNotFoundException(GenXSOPException):
 
 # ── 400 Bad Request / Business Rule Violations ───────────────────────────────
 
-class BusinessRuleViolationException(GenXSOPException):
+class BusinessRuleViolationException(GenXChainsException):
     """Raised when a business rule is violated (e.g., modifying a locked plan)."""
     def __init__(self, message: str):
         super().__init__(message=message, code="BUSINESS_RULE_VIOLATION")
 
 
-class DuplicateEntityException(GenXSOPException):
+class DuplicateEntityException(GenXChainsException):
     """Raised when a unique constraint would be violated."""
     def __init__(self, entity: str, field: str, value: str):
         super().__init__(
@@ -44,7 +44,7 @@ class DuplicateEntityException(GenXSOPException):
         )
 
 
-class InvalidStateTransitionException(GenXSOPException):
+class InvalidStateTransitionException(GenXChainsException):
     """Raised when an entity cannot transition to the requested state."""
     def __init__(self, entity: str, current_state: str, target_state: str):
         super().__init__(
@@ -55,7 +55,7 @@ class InvalidStateTransitionException(GenXSOPException):
 
 # ── 403 Forbidden ────────────────────────────────────────────────────────────
 
-class InsufficientPermissionsException(GenXSOPException):
+class InsufficientPermissionsException(GenXChainsException):
     """Raised when a user lacks the required role/permission."""
     def __init__(self, required_roles: list[str]):
         super().__init__(
@@ -66,7 +66,7 @@ class InsufficientPermissionsException(GenXSOPException):
 
 # ── 401 Unauthorized ─────────────────────────────────────────────────────────
 
-class AuthenticationException(GenXSOPException):
+class AuthenticationException(GenXChainsException):
     """Raised when authentication fails."""
     def __init__(self, message: str = "Authentication failed."):
         super().__init__(message=message, code="AUTHENTICATION_FAILED")
@@ -74,7 +74,7 @@ class AuthenticationException(GenXSOPException):
 
 # ── 500 Internal / ML Errors ─────────────────────────────────────────────────
 
-class ForecastGenerationException(GenXSOPException):
+class ForecastGenerationException(GenXChainsException):
     """Raised when ML forecast generation fails."""
     def __init__(self, product_id: int, model: str, reason: str):
         super().__init__(
@@ -83,7 +83,7 @@ class ForecastGenerationException(GenXSOPException):
         )
 
 
-class InsufficientDataException(GenXSOPException):
+class InsufficientDataException(GenXChainsException):
     """Raised when there is not enough historical data for an operation."""
     def __init__(self, required: int, available: int, operation: str = "operation"):
         super().__init__(
@@ -94,7 +94,7 @@ class InsufficientDataException(GenXSOPException):
 
 # ── FastAPI Exception Handlers ───────────────────────────────────────────────
 
-def to_http_exception(exc: GenXSOPException) -> HTTPException:
+def to_http_exception(exc: GenXChainsException) -> HTTPException:
     """
     Adapter: converts domain exceptions to FastAPI HTTPExceptions.
     Open/Closed Principle — add new mappings without modifying existing ones.

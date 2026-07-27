@@ -1,6 +1,6 @@
-# Enterprise Inventory Optimization Technical Plan (GenXSOP)
+# Enterprise Inventory Optimization Technical Plan (GenXChains)
 
-This document defines an enterprise-ready implementation plan to make inventory optimization a core decision layer across **Demand**, **Supply**, and **S&OP** in GenXSOP.
+This document defines an enterprise-ready implementation plan to make inventory optimization a core decision layer across **Demand**, **Supply**, and **S&OP** in GenXChains.
 
 It is designed for phased delivery with governance, security, auditability, scalability, and measurable business outcomes.
 

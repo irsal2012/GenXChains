@@ -1,9 +1,9 @@
-# GenXSOP Market Comparison (S&OP / IBP Platforms)
+# GenXChains Market Comparison (S&OP / IBP Platforms)
 
 ## Executive Summary
-This document benchmarks GenXSOP against established Sales & Operations Planning (S&OP) and Integrated Business Planning (IBP) platforms in the market. Enterprise leaders like SAP IBP, Kinaxis, o9, and Blue Yonder provide broad, mature functionality but often involve high implementation effort and cost. Mid-market tools such as ToolsGroup, Logility, E2open, and Netstock are typically faster to deploy and more focused in scope.
+This document benchmarks GenXChains against established Sales & Operations Planning (S&OP) and Integrated Business Planning (IBP) platforms in the market. Enterprise leaders like SAP IBP, Kinaxis, o9, and Blue Yonder provide broad, mature functionality but often involve high implementation effort and cost. Mid-market tools such as ToolsGroup, Logility, E2open, and Netstock are typically faster to deploy and more focused in scope.
 
-GenXSOP can differentiate by combining practical S&OP workflows, explainable AI-assisted planning, and faster time-to-value for organizations that want strong planning capabilities without heavyweight enterprise complexity.
+GenXChains can differentiate by combining practical S&OP workflows, explainable AI-assisted planning, and faster time-to-value for organizations that want strong planning capabilities without heavyweight enterprise complexity.
 
 ---
 
@@ -24,7 +24,7 @@ GenXSOP can differentiate by combining practical S&OP workflows, explainable AI-
 
 ---
 
-## Where GenXSOP Can Differentiate
+## Where GenXChains Can Differentiate
 
 ### 1) Faster Time-to-Value
 - Provide preconfigured S&OP workflows (demand review, supply review, executive cycle)
@@ -54,7 +54,7 @@ GenXSOP can differentiate by combining practical S&OP workflows, explainable AI-
 ---
 
 ## Suggested Positioning Statement
-**GenXSOP is a practical, AI-assisted S&OP platform for organizations that need enterprise-grade planning outcomes with faster deployment, stronger planner usability, and lower transformation risk.**
+**GenXChains is a practical, AI-assisted S&OP platform for organizations that need enterprise-grade planning outcomes with faster deployment, stronger planner usability, and lower transformation risk.**
 
 ---
 

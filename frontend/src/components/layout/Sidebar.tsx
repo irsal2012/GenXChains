@@ -46,7 +46,7 @@ export function Sidebar() {
             <div className="p-1.5 bg-blue-600 rounded-lg">
               <Zap className="h-4 w-4 text-white" />
             </div>
-            <span className="font-bold text-sm tracking-tight">GenXSOP</span>
+            <span className="font-bold text-sm tracking-tight">GenXChains</span>
           </div>
         )}
         {sidebarCollapsed && (
@@ -106,7 +106,7 @@ export function Sidebar() {
       {/* Version */}
       {!sidebarCollapsed && (
         <div className="px-4 py-3 border-t border-gray-800">
-          <p className="text-xs text-gray-600">GenXSOP v1.0.0</p>
+          <p className="text-xs text-gray-600">GenXChains v1.0.0</p>
         </div>
       )}
     </aside>

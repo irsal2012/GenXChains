@@ -12,7 +12,7 @@ In most organizations, inventory data is extracted from IMS/ERP/WMS platforms. T
   - What stock you have now
   - What moved
   - What is allocated / in transit
-- **Planning optimization (GenXSOP) = decision intelligence**
+- **Planning optimization (GenXChains) = decision intelligence**
   - What stock you should hold
   - Why policy should change
   - Service/cost/risk trade-offs across scenarios
@@ -115,11 +115,11 @@ Priority actions (next 90+ days):
 
 ---
 
-## 6) How this aligns with GenXSOP
+## 6) How this aligns with GenXChains
 
 - **Demand module:** provides forecast + uncertainty inputs.
 - **Supply module:** executes feasible replenishment/production under constraints.
 - **Inventory module:** holds policy outputs and exceptions.
 - **Scenarios + S&OP Cycle:** compare and approve service/cost/risk trade-offs.
 
-This keeps IMS/ERP/WMS as the execution backbone while GenXSOP drives planning intelligence and policy improvement.
+This keeps IMS/ERP/WMS as the execution backbone while GenXChains drives planning intelligence and policy improvement.

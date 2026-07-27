@@ -1,5 +1,5 @@
 """
-Seed data script for GenXSOP
+Seed data script for GenXChains
 Run: python seed_data.py
 """
 import sys
@@ -26,14 +26,14 @@ def seed():
     try:
         # ── Users ────────────────────────────────────────────────────────────
         users_data = [
-            {"email": "admin@genxsop.com", "full_name": "Admin User", "role": "admin", "department": "IT"},
-            {"email": "executive@genxsop.com", "full_name": "Sarah Johnson", "role": "executive", "department": "Executive"},
-            {"email": "demand@genxsop.com", "full_name": "Mike Chen", "role": "demand_planner", "department": "Planning"},
-            {"email": "supply@genxsop.com", "full_name": "Lisa Park", "role": "supply_planner", "department": "Operations"},
-            {"email": "inventory@genxsop.com", "full_name": "Tom Wilson", "role": "inventory_manager", "department": "Warehouse"},
-            {"email": "finance@genxsop.com", "full_name": "Emma Davis", "role": "finance_analyst", "department": "Finance"},
-            {"email": "coordinator@genxsop.com", "full_name": "James Brown", "role": "sop_coordinator", "department": "Planning"},
-            {"email": "viewer@genxsop.com", "full_name": "Anna Smith", "role": "viewer", "department": "Sales"},
+            {"email": "admin@genxchains.com", "full_name": "Admin User", "role": "admin", "department": "IT"},
+            {"email": "executive@genxchains.com", "full_name": "Sarah Johnson", "role": "executive", "department": "Executive"},
+            {"email": "demand@genxchains.com", "full_name": "Mike Chen", "role": "demand_planner", "department": "Planning"},
+            {"email": "supply@genxchains.com", "full_name": "Lisa Park", "role": "supply_planner", "department": "Operations"},
+            {"email": "inventory@genxchains.com", "full_name": "Tom Wilson", "role": "inventory_manager", "department": "Warehouse"},
+            {"email": "finance@genxchains.com", "full_name": "Emma Davis", "role": "finance_analyst", "department": "Finance"},
+            {"email": "coordinator@genxchains.com", "full_name": "James Brown", "role": "sop_coordinator", "department": "Planning"},
+            {"email": "viewer@genxchains.com", "full_name": "Anna Smith", "role": "viewer", "department": "Sales"},
         ]
         created_users = {}
         for u in users_data:
@@ -282,14 +282,14 @@ def seed():
 
         print("\n🎉 Seed data complete!")
         print("\n📋 Default Login Credentials:")
-        print("  Admin:       admin@genxsop.com / Password123!")
-        print("  Executive:   executive@genxsop.com / Password123!")
-        print("  Demand:      demand@genxsop.com / Password123!")
-        print("  Supply:      supply@genxsop.com / Password123!")
-        print("  Inventory:   inventory@genxsop.com / Password123!")
-        print("  Finance:     finance@genxsop.com / Password123!")
-        print("  Coordinator: coordinator@genxsop.com / Password123!")
-        print("  Viewer:      viewer@genxsop.com / Password123!")
+        print("  Admin:       admin@genxchains.com / Password123!")
+        print("  Executive:   executive@genxchains.com / Password123!")
+        print("  Demand:      demand@genxchains.com / Password123!")
+        print("  Supply:      supply@genxchains.com / Password123!")
+        print("  Inventory:   inventory@genxchains.com / Password123!")
+        print("  Finance:     finance@genxchains.com / Password123!")
+        print("  Coordinator: coordinator@genxchains.com / Password123!")
+        print("  Viewer:      viewer@genxchains.com / Password123!")
 
     except Exception as e:
         db.rollback()

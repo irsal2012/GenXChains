@@ -4,16 +4,16 @@ from pydantic import model_validator
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "sqlite:///./genxsop.db"
+    DATABASE_URL: str = "sqlite:///./genxchains.db"
     ENVIRONMENT: str = "development"
     AUTO_CREATE_TABLES: bool = True
-    SECRET_KEY: str = "genxsop-super-secret-key-change-in-production"
+    SECRET_KEY: str = "genxchains-super-secret-key-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
     DEBUG: bool = True
-    APP_NAME: str = "GenXSOP"
+    APP_NAME: str = "GenXChains"
     APP_VERSION: str = "1.0.0"
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
@@ -48,7 +48,7 @@ class Settings(BaseSettings):
         if "sqlite" in self.DATABASE_URL.lower():
             raise ValueError("SQLite is not allowed when ENVIRONMENT is production.")
 
-        if self.SECRET_KEY == "genxsop-super-secret-key-change-in-production":
+        if self.SECRET_KEY == "genxchains-super-secret-key-change-in-production":
             raise ValueError("Default SECRET_KEY is not allowed in production.")
 
         if self.AUTO_CREATE_TABLES:

@@ -1,6 +1,6 @@
 # Core module: exceptions, base classes, interfaces
 from app.core.exceptions import (
-    GenXSOPException,
+    GenXChainsException,
     EntityNotFoundException,
     BusinessRuleViolationException,
     DuplicateEntityException,
@@ -13,7 +13,7 @@ from app.core.exceptions import (
 )
 
 __all__ = [
-    "GenXSOPException",
+    "GenXChainsException",
     "EntityNotFoundException",
     "BusinessRuleViolationException",
     "DuplicateEntityException",

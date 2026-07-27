@@ -1,6 +1,6 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
-# GenXSOP — Frontend Restart Script
+# GenXChains — Frontend Restart Script
 # Usage: ./restart_frontend.sh [port]
 # Default port: 5173
 # ─────────────────────────────────────────────────────────────────────────────
@@ -10,7 +10,7 @@ FRONTEND_DIR="$(cd "$(dirname "$0")/frontend" && pwd)"
 URL="http://localhost:$PORT"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  GenXSOP Frontend Restart"
+echo "  GenXChains Frontend Restart"
 echo "  Port: $PORT"
 echo "  Dir:  $FRONTEND_DIR"
 echo "  URL:  $URL"

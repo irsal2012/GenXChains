@@ -5,7 +5,7 @@ This blueprint turns the integration strategy into an actionable technical contr
 ## 1) Integration goal
 
 - Keep ERP/WMS as **system of record** for execution transactions.
-- Use GenXSOP as **planning + governance system**.
+- Use GenXChains as **planning + governance system**.
 - Start with inbound sync, then controlled publish-back.
 
 ## 2) Recommended rollout sequence
@@ -49,7 +49,7 @@ Required controls:
 - Idempotent publish key
 - Full audit log
 
-## 3) API contracts (GenXSOP side)
+## 3) API contracts (GenXChains side)
 
 ### Inbound endpoints
 
@@ -76,7 +76,7 @@ Response should include:
 
 ## 4) Field mapping starter
 
-### Inventory inbound (ERP/WMS -> GenXSOP)
+### Inventory inbound (ERP/WMS -> GenXChains)
 
 - `material_code` -> `products.sku` lookup
 - `site_code` / `warehouse_code` -> `inventory.location`

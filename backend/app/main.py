@@ -1,5 +1,5 @@
 """
-GenXSOP FastAPI Application Entry Point
+GenXChains FastAPI Application Entry Point
 
 Architecture patterns applied:
 - Global exception handlers (convert domain exceptions → HTTP responses)
@@ -17,7 +17,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.config import settings
 from app.database import create_tables, SessionLocal, engine
-from app.core.exceptions import GenXSOPException, to_http_exception
+from app.core.exceptions import GenXChainsException, to_http_exception
 from app.utils.events import configure_event_bus
 from app.utils.logging import configure_logging
 from app.routers import (
@@ -103,8 +103,8 @@ async def request_context_middleware(request: Request, call_next):
 
 # ── Global Exception Handlers ─────────────────────────────────────────────────
 
-@app.exception_handler(GenXSOPException)
-async def genxsop_exception_handler(request: Request, exc: GenXSOPException) -> JSONResponse:
+@app.exception_handler(GenXChainsException)
+async def genxchains_exception_handler(request: Request, exc: GenXChainsException) -> JSONResponse:
     """
     Converts all domain exceptions to structured HTTP responses.
     Keeps routers clean — they never need to catch domain exceptions.

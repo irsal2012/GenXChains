@@ -1,4 +1,4 @@
-"""Alembic environment for GenXSOP.
+"""Alembic environment for GenXChains.
 
 The URL comes from app.config.settings rather than alembic.ini so that the API,
 the test suite and migrations can never point at different databases.

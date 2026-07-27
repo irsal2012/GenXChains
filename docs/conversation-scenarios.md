@@ -4,7 +4,7 @@ This document captures the scenarios discussed in the conversation that led to t
 
 ## 1) “What is this app for?” (high-level)
 
-GenXSOP is a full-stack **Sales & Operations Planning (S&OP) platform** that aligns demand, supply, inventory, and financial KPIs with workflow and approvals.
+GenXChains is a full-stack **Sales & Operations Planning (S&OP) platform** that aligns demand, supply, inventory, and financial KPIs with workflow and approvals.
 
 ## 2) Business user perspective
 
@@ -34,7 +34,7 @@ See: [`role-playbooks.md`](role-playbooks.md)
 
 ## 4) ERP/WMS integration (later)
 
-We discussed that GenXSOP can start standalone (manual entry / seeded sample data), and later integrate with ERP/WMS.
+We discussed that GenXChains can start standalone (manual entry / seeded sample data), and later integrate with ERP/WMS.
 
 Three integration scenarios:
 

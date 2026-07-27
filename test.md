@@ -1,4 +1,4 @@
-🏗️ GenXSOP Architecture Plan
+🏗️ GenXChains Architecture Plan
 Tech Stack
 Frontend: React 18 + TypeScript + Vite + TailwindCSS + Recharts/Nivo (charts)
 Backend: Python 3.11+ + FastAPI + SQLAlchemy (ORM) + Alembic (migrations)
@@ -7,7 +7,7 @@ AI/ML: scikit-learn, Prophet (forecasting), pandas, numpy
 Auth: JWT-based authentication
 📁 Project Structure
 
-GenXSOP/
+GenXChains/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py                    # FastAPI app entry point

@@ -1,6 +1,6 @@
 # Runtime & Deployment Architecture
 
-This document describes how GenXSOP runs locally and how it is expected to be deployed.
+This document describes how GenXChains runs locally and how it is expected to be deployed.
 
 ## Local development runtime
 
@@ -8,7 +8,7 @@ This document describes how GenXSOP runs locally and how it is expected to be de
 
 - **Backend**: FastAPI + Uvicorn (`backend/run.py`)
 - **Frontend**: Vite dev server (`npm run dev`) with proxy to backend
-- **Database**: SQLite by default (`sqlite:///./genxsop.db`) or PostgreSQL
+- **Database**: SQLite by default (`sqlite:///./genxchains.db`) or PostgreSQL
 
 ### Local runtime diagram
 

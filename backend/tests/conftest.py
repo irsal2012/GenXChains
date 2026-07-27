@@ -1,5 +1,5 @@
 """
-Shared test fixtures for GenXSOP test suite.
+Shared test fixtures for GenXChains test suite.
 
 Provides:
 - In-memory SQLite database (isolated per test)
@@ -68,7 +68,7 @@ def client(db: Session) -> TestClient:
 def admin_user(db: Session) -> User:
     """Create and persist an admin user."""
     user = User(
-        email="admin@genxsop.com",
+        email="admin@genxchains.com",
         hashed_password=get_password_hash("Admin@123"),
         full_name="Admin User",
         role="admin",
@@ -83,7 +83,7 @@ def admin_user(db: Session) -> User:
 @pytest.fixture
 def demand_planner_user(db: Session) -> User:
     user = User(
-        email="planner@genxsop.com",
+        email="planner@genxchains.com",
         hashed_password=get_password_hash("Planner@123"),
         full_name="Demand Planner",
         role="demand_planner",

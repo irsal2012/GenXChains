@@ -1,6 +1,6 @@
-# Epicor Kinetic → GenXSOP Integration Guide
+# Epicor Kinetic → GenXChains Integration Guide
 
-This document consolidates the recommended approach for moving data between **Epicor Kinetic ERP** and **GenXSOP**.
+This document consolidates the recommended approach for moving data between **Epicor Kinetic ERP** and **GenXChains**.
 
 ---
 
@@ -17,21 +17,21 @@ Options:
 3. **Direct database access (last resort, typically read-only)**
    - Usually discouraged due to upgrade risk and bypassing application logic.
 
-For Kinetic + GenXSOP, use **API + BAQ-driven extracts** as the preferred pattern.
+For Kinetic + GenXChains, use **API + BAQ-driven extracts** as the preferred pattern.
 
 ---
 
-## 2) GenXSOP APIs available for ERP integration
+## 2) GenXChains APIs available for ERP integration
 
 Base prefix: `/api/v1/integrations`
 
-Inbound (ERP → GenXSOP):
+Inbound (ERP → GenXChains):
 
 - `POST /erp/products/sync`
 - `POST /erp/inventory/sync`
 - `POST /erp/demand-actuals/sync`
 
-Outbound publish (GenXSOP → ERP):
+Outbound publish (GenXChains → ERP):
 
 - `POST /erp/publish/demand-plan/{plan_id}`
 - `POST /erp/publish/supply-plan/{plan_id}`
@@ -164,7 +164,7 @@ curl -X POST "$BASE/integrations/erp/publish/supply-plan/456" \
 
 ---
 
-## 5) Kinetic BAQ → GenXSOP field mapping template
+## 5) Kinetic BAQ → GenXChains field mapping template
 
 Use this starter mapping when shaping BAQ outputs.
 
@@ -196,7 +196,7 @@ Use this starter mapping when shaping BAQ outputs.
 
 ## 6) Sample BAQ output schema (recommended)
 
-### BAQ: `GenXSOP_Product_Master`
+### BAQ: `GenXChains_Product_Master`
 
 - `sku` (string, required)
 - `name` (string, required)
@@ -204,7 +204,7 @@ Use this starter mapping when shaping BAQ outputs.
 - `product_family` (string, nullable)
 - `lead_time_days` (int, nullable)
 
-### BAQ: `GenXSOP_Inventory_Snapshot`
+### BAQ: `GenXChains_Inventory_Snapshot`
 
 - `sku` (string, required)
 - `location` (string, required)
@@ -212,7 +212,7 @@ Use this starter mapping when shaping BAQ outputs.
 - `allocated_qty` (decimal, default 0)
 - `in_transit_qty` (decimal, default 0)
 
-### BAQ: `GenXSOP_Demand_Actuals_Monthly`
+### BAQ: `GenXChains_Demand_Actuals_Monthly`
 
 - `sku` (string, required)
 - `period` (date, required, first day of month)
@@ -229,7 +229,7 @@ Use this starter mapping when shaping BAQ outputs.
 3. Resolve unknown SKUs/locations and date/period formatting issues.
 4. Re-run using same `idempotency_key` to verify no duplicates.
 5. Execute production load (`dry_run=false`).
-6. Reconcile totals/counts between Kinetic and GenXSOP.
+6. Reconcile totals/counts between Kinetic and GenXChains.
 7. Schedule operations:
    - Products: nightly + on-demand
    - Inventory: daily (or more frequent)

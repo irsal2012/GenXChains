@@ -1,6 +1,6 @@
-# GenXSOP Documentation
+# GenXChains Documentation
 
-Welcome to the GenXSOP docs.
+Welcome to the GenXChains docs.
 
 ## Start here
 
@@ -25,5 +25,5 @@ Welcome to the GenXSOP docs.
 
 ## API tooling
 
-- **Postman collection:** [`postman/GenXSOP.postman_collection.json`](postman/GenXSOP.postman_collection.json)
-- **Postman environment:** [`postman/GenXSOP.postman_environment.json`](postman/GenXSOP.postman_environment.json)
+- **Postman collection:** [`postman/GenXChains.postman_collection.json`](postman/GenXChains.postman_collection.json)
+- **Postman environment:** [`postman/GenXChains.postman_environment.json`](postman/GenXChains.postman_environment.json)

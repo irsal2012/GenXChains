@@ -1,10 +1,10 @@
 ---
-title: GenXSOP Architecture Documentation
+title: GenXChains Architecture Documentation
 ---
 
-# GenXSOP Architecture
+# GenXChains Architecture
 
-This folder contains the architecture documentation for **GenXSOP**.
+This folder contains the architecture documentation for **GenXChains**.
 
 ## Quick links
 

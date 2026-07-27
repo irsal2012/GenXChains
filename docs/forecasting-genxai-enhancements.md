@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the recent forecasting improvements implemented in GenXSOP, including:
+This document summarizes the recent forecasting improvements implemented in GenXChains, including:
 
 1. **GenXAI/OpenAI advisor integration** for model recommendation (advisor mode)
 2. **Improved forecasting diagnostics** and richer accuracy metrics

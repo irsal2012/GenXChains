@@ -22,7 +22,7 @@ This document captures non-functional and cross-cutting concerns that apply acro
 
 ## Error handling
 
-- Domain exceptions extend `GenXSOPException` (`backend/app/core/exceptions.py`).
+- Domain exceptions extend `GenXChainsException` (`backend/app/core/exceptions.py`).
 - Global exception handler in `backend/app/main.py` converts them to:
 
 ```json

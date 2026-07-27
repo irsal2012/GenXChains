@@ -1,6 +1,6 @@
 # Publish Readiness & Go/No-Go Scorecard
 
-This document defines recommended controls before publishing plans from GenXSOP back into an ERP.
+This document defines recommended controls before publishing plans from GenXChains back into an ERP.
 
 It supports both:
 

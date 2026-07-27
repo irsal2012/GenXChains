@@ -2,7 +2,7 @@
 
 This document zooms into the **Forecasting** domain and shows the major backend components and their relationships.
 
-> Why forecasting? It demonstrates GenXSOP’s core patterns clearly: **Router → Service → Repository**, plus **Strategy/Factory** for ML and **EventBus** for audit.
+> Why forecasting? It demonstrates GenXChains’s core patterns clearly: **Router → Service → Repository**, plus **Strategy/Factory** for ML and **EventBus** for audit.
 
 This component supports promotion of selected forecast model results into demand plans.
 

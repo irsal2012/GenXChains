@@ -1,6 +1,6 @@
-# GenXSOP User Guide
+# GenXChains User Guide
 
-This guide explains how to use the main features of the GenXSOP web application.
+This guide explains how to use the main features of the GenXChains web application.
 
 ## Screenshots
 

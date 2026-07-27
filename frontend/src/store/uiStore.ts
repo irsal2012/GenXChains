@@ -34,7 +34,7 @@ export const useUIStore = create<UIState>()(
       },
     }),
     {
-      name: 'genxsop-ui',
+      name: 'genxchains-ui',
       onRehydrateStorage: () => (state) => {
         // Apply theme on rehydration
         if (state?.theme === 'dark') {

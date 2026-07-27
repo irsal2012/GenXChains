@@ -1,9 +1,9 @@
-# GenXSOP — Comprehensive Design Document
+# GenXChains — Comprehensive Design Document
 ## Next-Generation Sales & Operations Planning Platform
 
 **Version:** 1.0  
 **Date:** February 25, 2026  
-**Author:** GenXSOP Team  
+**Author:** GenXChains Team  
 
 ---
 
@@ -26,7 +26,7 @@
 ## 1. Executive Summary & Vision
 
 ### 1.1 Purpose
-GenXSOP is a **next-generation Sales & Operations Planning (S&OP) platform** designed to transform how organizations align demand, supply, and financial plans. It replaces fragmented spreadsheet-based planning with an integrated, AI-powered, collaborative platform that drives better business decisions.
+GenXChains is a **next-generation Sales & Operations Planning (S&OP) platform** designed to transform how organizations align demand, supply, and financial plans. It replaces fragmented spreadsheet-based planning with an integrated, AI-powered, collaborative platform that drives better business decisions.
 
 ### 1.2 Vision Statement
 *"To empower organizations with intelligent, real-time, and collaborative S&OP capabilities that bridge the gap between strategic intent and operational execution."*
@@ -138,7 +138,7 @@ GenXSOP is a **next-generation Sales & Operations Planning (S&OP) platform** des
 ### 2.3 Project Directory Structure
 
 ```
-GenXSOP/
+GenXChains/
 ├── backend/
 │   ├── app/
 │   │   ├── __init__.py
@@ -306,7 +306,7 @@ GenXSOP/
 │   ├── vite.config.ts
 │   └── tailwind.config.js
 │
-├── GenXSOP_Design_Document.md           # This document
+├── GenXChains_Design_Document.md           # This document
 └── README.md
 ```
 
@@ -865,7 +865,7 @@ CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
 │            │  └────────────────────────────────────┘      │
 │            │                                                │
 ├────────────┴────────────────────────────────────────────────┤
-│  Footer: GenXSOP v1.0 | © 2026                             │
+│  Footer: GenXChains v1.0 | © 2026                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -1709,7 +1709,7 @@ async def approve_plan(
 ┌─────────────────────────────────────────────┐
 │                                             │
 │         ┌─────────────────────┐             │
-│         │    🏢 GenXSOP       │             │
+│         │    🏢 GenXChains       │             │
 │         │                     │             │
 │         │  ┌───────────────┐  │             │
 │         │  │ Email         │  │             │
@@ -1822,8 +1822,8 @@ npm run dev                       # Start Vite dev server on :5173
 
 ```bash
 # backend/.env
-DATABASE_URL=sqlite:///./genxsop.db          # Dev: SQLite
-# DATABASE_URL=postgresql://user:pass@host/genxsop  # Prod: PostgreSQL
+DATABASE_URL=sqlite:///./genxchains.db          # Dev: SQLite
+# DATABASE_URL=postgresql://user:pass@host/genxchains  # Prod: PostgreSQL
 SECRET_KEY=your-secret-key-here
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
@@ -1835,7 +1835,7 @@ DEBUG=true
 ```bash
 # frontend/.env
 VITE_API_BASE_URL=http://localhost:8000/api/v1
-VITE_APP_NAME=GenXSOP
+VITE_APP_NAME=GenXChains
 VITE_APP_VERSION=1.0.0
 ```
 
@@ -1883,7 +1883,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://genxsop:password@db:5432/genxsop
+      - DATABASE_URL=postgresql://genxchains:password@db:5432/genxchains
       - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - db
@@ -1898,8 +1898,8 @@ services:
   db:
     image: postgres:15
     environment:
-      - POSTGRES_DB=genxsop
-      - POSTGRES_USER=genxsop
+      - POSTGRES_DB=genxchains
+      - POSTGRES_USER=genxchains
       - POSTGRES_PASSWORD=password
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -2024,7 +2024,7 @@ Foundation      Planning &      AI/ML           Scenario        Collaborative   
 | **Week 25** | Alert system, export/reporting (PDF, Excel, CSV) |
 | **Week 26** | Performance optimization, bug fixes, documentation, final testing |
 
-**Milestone:** ✅ Production-ready GenXSOP platform
+**Milestone:** ✅ Production-ready GenXChains platform
 
 ### 11.8 Summary Timeline
 
@@ -2055,4 +2055,4 @@ Month 1        Month 2        Month 3        Month 4        Month 5        Month
 
 ---
 
-*End of GenXSOP Design Document v1.0*
+*End of GenXChains Design Document v1.0*

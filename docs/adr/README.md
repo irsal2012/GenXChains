@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-This folder contains **Architecture Decision Records** for GenXSOP.
+This folder contains **Architecture Decision Records** for GenXChains.
 
 ## Index
 

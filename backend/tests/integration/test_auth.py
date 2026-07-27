@@ -30,7 +30,7 @@ class TestRegister:
 
     def test_register_duplicate_email_returns_409(self, client: TestClient, admin_user):
         resp = client.post("/api/v1/auth/register", json={
-            "email": "admin@genxsop.com",  # already exists
+            "email": "admin@genxchains.com",  # already exists
             "password": "Secure@123",
             "full_name": "Duplicate",
             "role": "demand_planner",
@@ -68,7 +68,7 @@ class TestLogin:
 
     def test_login_success(self, client: TestClient, admin_user):
         resp = client.post("/api/v1/auth/login", json={
-            "email": "admin@genxsop.com",
+            "email": "admin@genxchains.com",
             "password": "Admin@123",
         })
         assert resp.status_code == 200
@@ -78,7 +78,7 @@ class TestLogin:
 
     def test_login_wrong_password_returns_401(self, client: TestClient, admin_user):
         resp = client.post("/api/v1/auth/login", json={
-            "email": "admin@genxsop.com",
+            "email": "admin@genxchains.com",
             "password": "WrongPassword",
         })
         assert resp.status_code == 401
@@ -92,7 +92,7 @@ class TestLogin:
 
     def test_login_returns_jwt_token(self, client: TestClient, admin_user):
         resp = client.post("/api/v1/auth/login", json={
-            "email": "admin@genxsop.com",
+            "email": "admin@genxchains.com",
             "password": "Admin@123",
         })
         token = resp.json()["access_token"]
@@ -106,7 +106,7 @@ class TestGetMe:
         resp = client.get("/api/v1/auth/me", headers=admin_headers)
         assert resp.status_code == 200
         data = resp.json()
-        assert data["email"] == "admin@genxsop.com"
+        assert data["email"] == "admin@genxchains.com"
         assert data["role"] == "admin"
 
     def test_get_me_unauthenticated_returns_401(self, client: TestClient):

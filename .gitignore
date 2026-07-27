@@ -71,7 +71,7 @@ coverage.xml
 *.sqlite
 *.sqlite3
 *.db
-backend/genxsop.db
+backend/genxchains.db
 
 # Alembic
 backend/alembic/versions/*.pyc

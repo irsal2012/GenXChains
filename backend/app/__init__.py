@@ -1,1 +1,1 @@
-# GenXSOP Backend Application
+# GenXChains Backend Application

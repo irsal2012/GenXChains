@@ -1,6 +1,6 @@
 # System Context (C4 L1)
 
-This document describes **who** uses GenXSOP and **what external systems** it interacts with.
+This document describes **who** uses GenXChains and **what external systems** it interacts with.
 
 ## Primary actors
 
@@ -37,7 +37,7 @@ flowchart LR
   Admin[Admin]
 
   %% System
-  System["GenXSOP<br/>(S&OP Planning Platform)"]
+  System["GenXChains<br/>(S&OP Planning Platform)"]
 
   %% External
   DB[("Relational DB<br/>SQLite/Postgres")]

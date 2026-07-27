@@ -1,6 +1,6 @@
 # Containers (C4 L2)
 
-GenXSOP is a classic **SPA + API + DB** architecture.
+GenXChains is a classic **SPA + API + DB** architecture.
 
 ## Diagram
 

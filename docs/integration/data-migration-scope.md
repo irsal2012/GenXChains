@@ -1,6 +1,6 @@
-# Data Migration Scope for GenXSOP
+# Data Migration Scope for GenXChains
 
-This document defines **what data should be migrated** into GenXSOP and which data should remain in source enterprise systems.
+This document defines **what data should be migrated** into GenXChains and which data should remain in source enterprise systems.
 
 ## 1) Migration objective
 
@@ -75,7 +75,7 @@ This document defines **what data should be migrated** into GenXSOP and which da
 
 Before go-live, decide:
 
-1. Whether open plans are migrated vs re-created in GenXSOP
+1. Whether open plans are migrated vs re-created in GenXChains
 2. Which system is authoritative for each domain during transition
 3. Freeze window for final legacy extracts
 4. Reconciliation thresholds (e.g., inventory and demand totals by period/location)

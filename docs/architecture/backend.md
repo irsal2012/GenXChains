@@ -73,7 +73,7 @@ sequenceDiagram
 ### Application entry (`backend/app/main.py`)
 
 - Registers all routers under `/api/v1`.
-- Global exception handler converts `GenXSOPException` to a consistent JSON response.
+- Global exception handler converts `GenXChainsException` to a consistent JSON response.
 - Startup event:
   - `create_tables()` (creates tables in dev; production would usually use Alembic)
   - `configure_event_bus(SessionLocal)` to attach audit + logging handlers.
@@ -163,7 +163,7 @@ Mounted in `main.py`:
 
 ## Error handling
 
-- Domain exceptions derive from `GenXSOPException` (`backend/app/core/exceptions.py`).
+- Domain exceptions derive from `GenXChainsException` (`backend/app/core/exceptions.py`).
 - Global exception handler in `main.py` maps them to structured JSON.
 
 ## What to improve next (optional)

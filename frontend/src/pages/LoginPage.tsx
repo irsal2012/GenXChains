@@ -31,7 +31,7 @@ export function LoginPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-2xl mb-4 shadow-lg">
             <Zap className="h-6 w-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">GenXSOP</h1>
+          <h1 className="text-2xl font-bold text-white">GenXChains</h1>
           <p className="text-sm text-gray-400 mt-1">Next-Gen S&OP Platform</p>
         </div>
 
@@ -55,7 +55,7 @@ export function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@genxsop.com"
+                placeholder="admin@genxchains.com"
                 required
                 className="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               />
@@ -96,13 +96,13 @@ export function LoginPage() {
 
           <div className="mt-6 pt-5 border-t border-gray-100">
             <p className="text-xs text-gray-400 text-center">
-              Demo credentials: <span className="font-medium text-gray-600">admin@genxsop.com</span> / <span className="font-medium text-gray-600">Password123!</span>
+              Demo credentials: <span className="font-medium text-gray-600">admin@genxchains.com</span> / <span className="font-medium text-gray-600">Password123!</span>
             </p>
           </div>
         </div>
 
         <p className="text-center text-xs text-gray-600 mt-6">
-          © 2026 GenXSOP. All rights reserved.
+          © 2026 GenXChains. All rights reserved.
         </p>
       </div>
     </div>

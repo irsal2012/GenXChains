@@ -1,20 +1,20 @@
-# GenXSOP Developer / API Guide
+# GenXChains Developer / API Guide
 
-This guide shows how to call the GenXSOP API directly (for integration, QA, or scripting).
+This guide shows how to call the GenXChains API directly (for integration, QA, or scripting).
 
 ## Postman (optional)
 
 This repo includes ready-to-import Postman files:
 
-- Collection: `docs/postman/GenXSOP.postman_collection.json`
-- Environment: `docs/postman/GenXSOP.postman_environment.json`
+- Collection: `docs/postman/GenXChains.postman_collection.json`
+- Environment: `docs/postman/GenXChains.postman_environment.json`
 
 ### Import steps
 
 1. Open Postman
 2. **Import** → select the collection JSON
 3. **Import** → select the environment JSON
-4. Select the environment **“GenXSOP Local”** (top-right)
+4. Select the environment **“GenXChains Local”** (top-right)
 5. Run **Auth → Login (sets tokens)**
 
 The login request will automatically save:
@@ -31,7 +31,7 @@ Subsequent requests use `Authorization: Bearer {{accessToken}}`.
 
 ## Authentication
 
-GenXSOP uses **JWT Bearer** authentication.
+GenXChains uses **JWT Bearer** authentication.
 
 ### 1) Login (get tokens)
 

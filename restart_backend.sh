@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 # ─────────────────────────────────────────────────────────────────────────────
-# GenXSOP — Backend Restart Script
+# GenXChains — Backend Restart Script
 # Usage: ./restart_backend.sh [port]
 # Default port: 8000
 # ─────────────────────────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ BACKEND_DIR="$(cd "$(dirname "$0")/backend" && pwd)"
 LOG_FILE="$BACKEND_DIR/server.log"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  GenXSOP Backend Restart"
+echo "  GenXChains Backend Restart"
 echo "  Port: $PORT"
 echo "  Dir:  $BACKEND_DIR"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -76,7 +76,7 @@ fi
 
 # ── Step 6: Start the server ─────────────────────────────────────────────────
 echo ""
-echo "▶ Starting GenXSOP backend on port $PORT..."
+echo "▶ Starting GenXChains backend on port $PORT..."
 echo "  Logs: $LOG_FILE"
 echo ""
 

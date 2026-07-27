@@ -1,4 +1,4 @@
-# GenXSOP — Next-Generation Sales & Operations Planning Platform
+# GenXChains — Next-Generation Sales & Operations Planning Platform
 
 A full-stack S&OP platform built with **FastAPI** (Python) + **React** (TypeScript), applying **SOLID principles** and **GoF Design Patterns** throughout.
 
@@ -17,7 +17,7 @@ If you’re new to the codebase, start here:
 - **ADRs:** [`docs/adr/README.md`](docs/adr/README.md)
 - **C4 L3 Components (Forecasting):** [`docs/architecture/components-forecasting.md`](docs/architecture/components-forecasting.md)
 
-## 🧭 How to use GenXSOP
+## 🧭 How to use GenXChains
 
 - **User Guide (UI walkthrough):** [`docs/user-guide.md`](docs/user-guide.md)
 - **Developer / API Guide:** [`docs/api-guide.md`](docs/api-guide.md)
@@ -26,15 +26,15 @@ If you’re new to the codebase, start here:
 
 ## 🧰 API tooling
 
-- **Postman collection:** [`docs/postman/GenXSOP.postman_collection.json`](docs/postman/GenXSOP.postman_collection.json)
-- **Postman environment:** [`docs/postman/GenXSOP.postman_environment.json`](docs/postman/GenXSOP.postman_environment.json)
+- **Postman collection:** [`docs/postman/GenXChains.postman_collection.json`](docs/postman/GenXChains.postman_collection.json)
+- **Postman environment:** [`docs/postman/GenXChains.postman_environment.json`](docs/postman/GenXChains.postman_environment.json)
 
 ---
 
 ## 🏗️ Architecture Overview
 
 ```
-GenXSOP/
+GenXChains/
 ├── backend/                    # FastAPI Python backend
 │   └── app/
 │       ├── core/               # Exception hierarchy (SRP)
@@ -152,8 +152,8 @@ Backup + restore verification helper:
 
 ```bash
 cd backend
-SOURCE_DATABASE_URL='postgresql://user:pass@host:5432/genxsop' \
-RESTORE_DATABASE_URL='postgresql://user:pass@host:5432/genxsop_restore_check' \
+SOURCE_DATABASE_URL='postgresql://user:pass@host:5432/genxchains' \
+RESTORE_DATABASE_URL='postgresql://user:pass@host:5432/genxchains_restore_check' \
 bash scripts/backup_restore_runbook.sh
 ```
 

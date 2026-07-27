@@ -1,1 +1,1 @@
-# GenXSOP Test Suite
+# GenXChains Test Suite

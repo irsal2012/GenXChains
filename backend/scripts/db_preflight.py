@@ -13,7 +13,7 @@ import os
 import sys
 
 
-DEFAULT_SECRET = "genxsop-super-secret-key-change-in-production"
+DEFAULT_SECRET = "genxchains-super-secret-key-change-in-production"
 
 
 def _bool_env(name: str, default: bool) -> bool:
@@ -25,7 +25,7 @@ def _bool_env(name: str, default: bool) -> bool:
 
 def run() -> int:
     environment = os.getenv("ENVIRONMENT", "development").strip().lower()
-    database_url = os.getenv("DATABASE_URL", "sqlite:///./genxsop.db")
+    database_url = os.getenv("DATABASE_URL", "sqlite:///./genxchains.db")
     secret_key = os.getenv("SECRET_KEY", DEFAULT_SECRET)
     auto_create_tables = _bool_env("AUTO_CREATE_TABLES", True)
 
@@ -59,7 +59,7 @@ def run() -> int:
         )
 
     has_failures = False
-    print("GenXSOP DB Preflight")
+    print("GenXChains DB Preflight")
     print(f"- environment: {environment}")
     for title, ok, detail in checks:
         marker = "PASS" if ok else "FAIL"

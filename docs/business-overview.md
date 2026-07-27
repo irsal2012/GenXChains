@@ -1,6 +1,6 @@
-# GenXSOP Business Overview
+# GenXChains Business Overview
 
-GenXSOP is a **Sales & Operations Planning (S&OP)** platform that helps an organization align **demand**, **supply**, **inventory**, and **financial outcomes** using a single workflow-driven application.
+GenXChains is a **Sales & Operations Planning (S&OP)** platform that helps an organization align **demand**, **supply**, **inventory**, and **financial outcomes** using a single workflow-driven application.
 
 It is designed to replace fragmented spreadsheet-based planning with:
 
@@ -12,7 +12,7 @@ It is designed to replace fragmented spreadsheet-based planning with:
 
 ## What problem it solves
 
-Typical pain points GenXSOP addresses:
+Typical pain points GenXChains addresses:
 
 - Planning data scattered across spreadsheets and teams
 - Conflicting versions of demand/supply/inventory plans
@@ -22,7 +22,7 @@ Typical pain points GenXSOP addresses:
 
 ## Who uses it
 
-GenXSOP supports these roles (with role-based access control):
+GenXChains supports these roles (with role-based access control):
 
 - **Executive / Leadership**: reviews KPIs, approves plans and scenarios, makes final decisions
 - **S&OP Coordinator**: manages the cycle steps, assigns owners, advances the workflow

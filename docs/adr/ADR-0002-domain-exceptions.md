@@ -14,8 +14,8 @@ Without a consistent approach, each router would need to catch errors and map th
 
 Implement a domain exception hierarchy and a single global exception handler:
 
-- Domain exceptions extend `GenXSOPException` (`backend/app/core/exceptions.py`).
-- `backend/app/main.py` registers an exception handler for `GenXSOPException`.
+- Domain exceptions extend `GenXChainsException` (`backend/app/core/exceptions.py`).
+- `backend/app/main.py` registers an exception handler for `GenXChainsException`.
 - The handler maps a domain error code to an HTTP status and returns structured JSON.
 
 ## Consequences
